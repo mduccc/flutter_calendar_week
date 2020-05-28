@@ -23,7 +23,11 @@ dependencies:
       ref: 0.1.0
 ```
 
-```dart
+```Dart
+import 'package:flutter_calendar_week/calendar_week.dart';
+```
+
+```Dart
 CalendarWeek(
               height: 80,
               minDate: DateTime.now().add(
