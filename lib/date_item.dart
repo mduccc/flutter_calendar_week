@@ -1,45 +1,44 @@
 part of 'calendar_week.dart';
 
-// ignore: must_be_immutable
 class _DateItem extends StatelessWidget {
-  /* Day */
+  /// Date
   final DateTime date;
 
-  /* TextStyle of day */
+  /// [TextStyle] of day
   final TextStyle dateStyle;
 
-  /* TextStyle of day after pressed */
+  /// [TextStyle] of day after pressed
   TextStyle pressedDateStyle;
 
-  /* Background of day */
+  /// [Background] of day
   final Color backgroundColor;
 
-  /* Background of today */
+  /// [Background] of today
   final Color todayBackgroundColor;
 
-  /* Background of day after pressed */
+  /// [Background] of day after pressed
 
   final Color pressedBackgroundColor;
 
-  /* Alignment of decoration */
+  /// [Alignment] of decoration
   final Alignment decorationAlignment;
 
-  /* Shape of day */
+  /// [ShapeBorder] of day
   final ShapeBorder dayShapeBorder;
 
-  /* Callback function after pressed on date */
+  /// [Callback] function after pressed on date
   final void Function(DateTime) onDatePressed;
 
-  /* Callback function after long pressed on date */
+  /// [Callback] function after long pressed on date
   final void Function(DateTime) onDateLongPressed;
 
-  /* Decoration Widget */
-  Widget decoration;
+  /// Decoration [Widget]
+  final Widget decoration;
 
-  /* Default background of day */
+  /// Default [Background] of day
   Color _defaultBackgroundColor;
 
-  /* Default TextStyle of day */
+  /// Default [TextStyle] of day
   TextStyle _defaultTextStyle;
 
   _DateItem({
@@ -62,11 +61,13 @@ class _DateItem extends StatelessWidget {
         ? StreamBuilder(
             stream: _dateSubject,
             builder: (_, data) {
-              /* Set default background of day */
+              /// Set default [Background] of day
               _defaultBackgroundColor = backgroundColor;
-              /* Set default TextStyle of day */
+
+              /// Set default [TextStyle] of day
               _defaultTextStyle = dateStyle;
-              /* If today, set background of today */
+
+              /// If today, set [Background] of today
               if (_compareDate(date, _today)) {
                 _defaultBackgroundColor = todayBackgroundColor;
               } else if (data != null && !data.hasError && data.hasData) {
@@ -83,7 +84,7 @@ class _DateItem extends StatelessWidget {
         : Container();
   }
 
-  /* Root layout */
+  /// Root layout
   Widget _root() => Container(
         width: 50,
         height: 50,
@@ -116,7 +117,7 @@ class _DateItem extends StatelessWidget {
         ),
       );
 
-  /* Decoration layout */
+  /// Decoration layout
   Widget _decoration() => Positioned(
         top: 28,
         left: 0,
@@ -133,13 +134,13 @@ class _DateItem extends StatelessWidget {
                 : Container()),
       );
 
-  /* Handler pressed */
+  /// Handler pressed
   void _onPressed() {
     _dateSubject.add(date);
     onDatePressed(date);
   }
 
-  /* Handler long pressed */
+  /// Handler long pressed
   void _onLongPressed() {
     _dateSubject.add(date);
     onDateLongPressed(date);

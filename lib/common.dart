@@ -1,12 +1,12 @@
 part of 'calendar_week.dart';
 
-/* BehaviorSubject emit last date pressed */
+/// [BehaviorSubject] emit last date pressed
 final BehaviorSubject<DateTime> _dateSubject = BehaviorSubject<DateTime>();
 
-/* Length of day of week */
+/// Length of day of week
 final int _maxDayOfWeek = 7;
 
-/* List contain day of week */
+/// List contain day of week
 const List<String> _dayOfWeekDefault = [
   'MON',
   'TUE',
@@ -17,5 +17,5 @@ const List<String> _dayOfWeekDefault = [
   'SUN'
 ];
 
-/* Today DateTime */
+/// Today date time
 final _today = DateTime.now();
