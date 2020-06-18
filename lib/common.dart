@@ -17,5 +17,9 @@ const List<String> _dayOfWeekDefault = [
   'SUN'
 ];
 
+const List<int> _weekendsIndexes = [
+  5, 6
+];
+
 /* Today DateTime */
 final _today = DateTime.now();

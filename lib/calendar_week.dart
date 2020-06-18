@@ -25,6 +25,9 @@ class CalendarWeek extends StatefulWidget {
   /* TextStyle of day of week */
   TextStyle dayOfWeekStyle;
 
+  /* TextStyle of day of week */
+  TextStyle weekendsStyle;
+
   /* Alignment of day day of week */
   final FractionalOffset dayOfWeekAlignment;
 
@@ -61,6 +64,9 @@ class CalendarWeek extends StatefulWidget {
   /* List contain titles day of week */
   List<String> dayOfWeek;
 
+  /* List contain indexes of weekends from days titles list */
+  List<int> weekendsIndexes;
+
   /* Vertical space between day of week and date */
   final double spaceBetweenLabelAndDate;
 
@@ -94,6 +100,9 @@ class CalendarWeek extends StatefulWidget {
       this.onDateLongPressed,
       this.backgroundColor = Colors.white,
       this.dayOfWeek = _dayOfWeekDefault,
+      this.weekendsIndexes = _weekendsIndexes,
+      this.weekendsStyle =
+          const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
       this.spaceBetweenLabelAndDate = 0,
       this.dayShapeBorder = const CircleBorder(),
       this.decorations = const []}) {
@@ -196,7 +205,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
           width: 50,
           child: Text(
             title,
-            style: widget.dayOfWeekStyle,
+            style:  widget.weekendsIndexes.indexOf(widget.dayOfWeek.indexOf(title)) != -1
+                ? widget.weekendsStyle
+                : widget.dayOfWeekStyle,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
@@ -213,7 +224,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
         date: date,
         dateStyle: _compareDate(date, _today)
             ? widget.todayDateStyle
-            : widget.dateStyle,
+            : date.weekday == 6 || date.weekday == 7
+              ? widget.weekendsStyle
+              : widget.dateStyle,
         pressedDateStyle: widget.pressedDateStyle,
         backgroundColor: widget.dateBackgroundColor,
         todayBackgroundColor: widget.todayBackgroundColor,
