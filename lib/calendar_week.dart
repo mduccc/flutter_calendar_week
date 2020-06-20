@@ -25,7 +25,7 @@ class CalendarWeek extends StatefulWidget {
   /* TextStyle of day of week */
   TextStyle dayOfWeekStyle;
 
-  /* TextStyle of day of week */
+  /* TextStyle of weekends days */
   TextStyle weekendsStyle;
 
   /* Alignment of day day of week */
