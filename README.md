@@ -2,7 +2,7 @@
 A calendar view by week
 
 #### TODO:
-- [ ] Jump to date
+- [x] Jump to date
 
 ##### IOS | Android:
 <img src="https://i.imgur.com/MED4xrc.png" width="40%" height="40%"/> <img src="https://i.imgur.com/1WXg1o6.gif" width="43.3%" height="42.45%"/>

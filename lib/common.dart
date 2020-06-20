@@ -1,7 +1,8 @@
 part of 'calendar_week.dart';
 
 /// [BehaviorSubject] emit last date pressed
-final BehaviorSubject<DateTime> _dateSubject = BehaviorSubject<DateTime>();
+final BehaviorSubject<DateTime> _commonDateSubject =
+    BehaviorSubject<DateTime>();
 
 /// Length of day of week
 final int _maxDayOfWeek = 7;

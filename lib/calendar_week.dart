@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_calendar_week/model/decoration_item.dart';
-import 'package:dartz/dartz.dart' as dartz;
 
 part 'model/week_item.dart';
 
@@ -9,11 +8,40 @@ part 'utils/split_to_week.dart';
 
 part 'utils/compare_date.dart';
 
+part 'utils/find_current_week_index.dart';
+
 part 'date_item.dart';
 
 part 'common.dart';
 
+class CalendarWeekController {
+  /// [Callback] update widget
+  Function(DateTime) _widgetJumpToDate;
+
+  /// Default init page
+  int _currentWeekIndex = 0;
+  final List<_WeekItem> _weeks = [];
+
+  /// [jumpToDate] show week contain [dateTime] on the screen
+  void jumpToDate(DateTime dateTime) {
+    /// find [_newCurrentWeekIndex] corresponding new [dateTime]
+    final _newCurrentWeekIndex = findCurrentWeekIndexByDate(dateTime, _weeks);
+
+    /// If has matched, update [_currentWeekIndex] and update Widget
+    if (_newCurrentWeekIndex != -1) {
+      _currentWeekIndex = _newCurrentWeekIndex;
+
+      /// Call [_widgetJumpToDate] for update Widget
+      _widgetJumpToDate(dateTime);
+    }
+  }
+}
+
+// ignore: must_be_immutable
 class CalendarWeek extends StatefulWidget {
+  /// Key
+  final Key key;
+
   /// Calendar start from [minDate]
   final DateTime minDate;
 
@@ -71,9 +99,12 @@ class CalendarWeek extends StatefulWidget {
   /// Height of calendar
   final double height;
 
+  CalendarWeekController controller;
+
   CalendarWeek(
       {@required this.maxDate,
       @required this.minDate,
+      this.key,
       this.height = 80,
       this.dayOfWeekStyle =
           const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
@@ -94,13 +125,18 @@ class CalendarWeek extends StatefulWidget {
       this.dayOfWeek = _dayOfWeekDefault,
       this.spaceBetweenLabelAndDate = 0,
       this.dayShapeBorder = const CircleBorder(),
-      this.decorations = const []}) {
+      this.decorations = const [],
+      this.controller})
+      : super(key: key) {
     /// Fit day of week
     if (dayOfWeek.length < 7) {
       dayOfWeek
         ..clear()
         ..addAll(_dayOfWeekDefault);
     }
+
+    /// Init default controller if it's null
+    controller ??= CalendarWeekController();
   }
 
   @override
@@ -111,24 +147,34 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// List contain weeks
   final List<_WeekItem> weeks = [];
 
-  /// Default init page
-  int initialPage = 0;
-
   /// Page controller
   PageController _pageController;
+
+  void _jumToDateHandler(DateTime dateTime) {
+    _commonDateSubject.add(dateTime);
+    _pageController.animateToPage(widget.controller._currentWeekIndex,
+        duration: Duration(milliseconds: 500), curve: Curves.ease);
+  }
 
   @override
   void initState() {
     super.initState();
 
-    ///  Read from [minDate] to [maxDate[ and split to weeks
-    final toWeek =
-        _splitToWeek(widget.minDate, widget.maxDate, widget.dayOfWeek);
-    weeks.addAll(toWeek.value1);
+    /// Read from [minDate] to [maxDate[ and split to weeks
+    weeks
+        .addAll(_splitToWeek(widget.minDate, widget.maxDate, widget.dayOfWeek));
 
-    /// Init Page controller, [toWeek.value2] is index of Page contain today.
+    /// [_currentWeekIndex] is index of week in [List] weeks contain today
+    widget.controller
+      .._currentWeekIndex = findCurrentWeekIndexByDate(_today, weeks)
+      .._weeks.clear()
+      .._weeks.addAll(weeks)
+      .._widgetJumpToDate = _jumToDateHandler;
+
+    /// Init Page controller
     /// Set [initialPage] is page contain today
-    _pageController = PageController(initialPage: toWeek.value2);
+    _pageController =
+        PageController(initialPage: widget.controller._currentWeekIndex);
   }
 
   @override
@@ -139,11 +185,11 @@ class _CalendarWeekState extends State<CalendarWeek> {
           ' please fix it before show the CalendarWeek');
     }
 
-    return _root();
+    return _body();
   }
 
-  /// Root layout
-  Widget _root() => Container(
+  /// Body layout
+  Widget _body() => Container(
       color: widget.backgroundColor,
       width: double.infinity,
       height: widget.height,
@@ -166,10 +212,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
               child: _dayOfWeek(weeks.dayOfWeek),
             ),
           ),
+
           /// Vertical space between day of week and date
           SizedBox(
             height: widget.spaceBetweenLabelAndDate,
           ),
+
           /// Date layout
           Expanded(
             flex: 10,

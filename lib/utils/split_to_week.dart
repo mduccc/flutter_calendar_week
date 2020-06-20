@@ -1,9 +1,9 @@
 part of '../calendar_week.dart';
 
 /// Read from [minDate] to [maxDate] and split to weeks.
-/// Return [List] contain weeks and index of week item content today.
+/// Return [List] contain weeks;
 
-dartz.Tuple2<List<_WeekItem>, int> _splitToWeek(
+List<_WeekItem> _splitToWeek(
     DateTime minDate, DateTime maxDate, List<String> dayOfWeek) {
   /// Count until length day of week
   int count = 1;
@@ -17,10 +17,7 @@ dartz.Tuple2<List<_WeekItem>, int> _splitToWeek(
   /// List contain weeks
   final List<_WeekItem> _weeks = [];
 
-  /// index of week item contain today
-  int thisWeek = 0;
-
-  /// clone [minDate] object
+  /// Clone [minDate] object
   DateTime minDateCloned = DateTime(
       minDate.year,
       minDate.month,
@@ -40,11 +37,6 @@ dartz.Tuple2<List<_WeekItem>, int> _splitToWeek(
 
       /// Add day of week to list days
       _days.add(minDateCloned);
-
-      /// If day is today, set index of week item contain today
-      if (_compareDate(minDateCloned, _today)) {
-        thisWeek = _weeks.length;
-      }
       count++;
     }
 
@@ -67,11 +59,6 @@ dartz.Tuple2<List<_WeekItem>, int> _splitToWeek(
       /// Clear list before add new item
       _dayOfWeek.clear();
       _days.clear();
-
-      /// If day is today, set index of week item contain today
-      if (_compareDate(minDateCloned, _today)) {
-        thisWeek = _weeks.length - 1;
-      }
     }
 
     /// Push a next day
@@ -96,6 +83,5 @@ dartz.Tuple2<List<_WeekItem>, int> _splitToWeek(
       }
     }
   }
-
-  return dartz.Tuple2<List<_WeekItem>, int>(_weeks, thisWeek);
+  return _weeks;
 }

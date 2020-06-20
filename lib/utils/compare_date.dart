@@ -7,6 +7,5 @@ bool _compareDate(DateTime dateA, DateTime dateB) {
       dateA?.year == dateB?.year) {
     return true;
   }
-
   return false;
 }

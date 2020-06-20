@@ -1,6 +1,6 @@
 part of 'calendar_week.dart';
 
-class _DateItem extends StatelessWidget {
+class _DateItem extends StatefulWidget {
   /// Date
   final DateTime date;
 
@@ -8,7 +8,7 @@ class _DateItem extends StatelessWidget {
   final TextStyle dateStyle;
 
   /// [TextStyle] of day after pressed
-  TextStyle pressedDateStyle;
+  final TextStyle pressedDateStyle;
 
   /// [Background] of day
   final Color backgroundColor;
@@ -35,12 +35,6 @@ class _DateItem extends StatelessWidget {
   /// Decoration [Widget]
   final Widget decoration;
 
-  /// Default [Background] of day
-  Color _defaultBackgroundColor;
-
-  /// Default [TextStyle] of day
-  TextStyle _defaultTextStyle;
-
   _DateItem({
     this.date,
     this.dateStyle,
@@ -56,36 +50,44 @@ class _DateItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return date != null
-        ? StreamBuilder(
-            stream: _dateSubject,
-            builder: (_, data) {
-              /// Set default [Background] of day
-              _defaultBackgroundColor = backgroundColor;
+  __DateItemState createState() => __DateItemState();
+}
 
-              /// Set default [TextStyle] of day
-              _defaultTextStyle = dateStyle;
+class __DateItemState extends State<_DateItem> {
+  /// Default [Background] of day
+  Color _defaultBackgroundColor;
 
-              /// If today, set [Background] of today
-              if (_compareDate(date, _today)) {
-                _defaultBackgroundColor = todayBackgroundColor;
-              } else if (data != null && !data.hasError && data.hasData) {
-                final DateTime dateSelected = data.data;
-                if (_compareDate(date, dateSelected)) {
-                  _defaultBackgroundColor = pressedBackgroundColor;
-                  _defaultTextStyle = pressedDateStyle;
-                }
+  /// Default [TextStyle] of day
+  TextStyle _defaultTextStyle;
+
+  @override
+  Widget build(BuildContext context) => widget.date != null
+      ? StreamBuilder(
+          stream: _commonDateSubject,
+          builder: (_, data) {
+            /// Set default [Background] of day
+            _defaultBackgroundColor = widget.backgroundColor;
+
+            /// Set default [TextStyle] of day
+            _defaultTextStyle = widget.dateStyle;
+
+            /// If today, set [Background] of today
+            if (_compareDate(widget.date, _today)) {
+              _defaultBackgroundColor = widget.todayBackgroundColor;
+            } else if (data != null && !data.hasError && data.hasData) {
+              final DateTime dateSelected = data.data;
+              if (_compareDate(widget.date, dateSelected)) {
+                _defaultBackgroundColor = widget.pressedBackgroundColor;
+                _defaultTextStyle = widget.pressedDateStyle;
               }
+            }
+            return _body();
+          },
+        )
+      : Container();
 
-              return _root();
-            },
-          )
-        : Container();
-  }
-
-  /// Root layout
-  Widget _root() => Container(
+  /// Body layout
+  Widget _body() => Container(
         width: 50,
         height: 50,
         alignment: FractionalOffset.center,
@@ -95,7 +97,7 @@ class _DateItem extends StatelessWidget {
               padding: EdgeInsets.all(5),
               onPressed: _onPressed,
               color: _defaultBackgroundColor,
-              shape: dayShapeBorder,
+              shape: widget.dayShapeBorder,
               child: Stack(
                 children: <Widget>[
                   Positioned(
@@ -106,7 +108,7 @@ class _DateItem extends StatelessWidget {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        '${date.day}',
+                        '${widget.date.day}',
                         style: _defaultTextStyle,
                       ),
                     ),
@@ -125,24 +127,24 @@ class _DateItem extends StatelessWidget {
         child: Container(
             width: 50,
             height: 12,
-            alignment: decorationAlignment,
-            child: decoration != null
+            alignment: widget.decorationAlignment,
+            child: widget.decoration != null
                 ? FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: decoration,
+                    child: widget.decoration,
                   )
                 : Container()),
       );
 
   /// Handler pressed
   void _onPressed() {
-    _dateSubject.add(date);
-    onDatePressed(date);
+    _commonDateSubject.add(widget.date);
+    widget.onDatePressed(widget.date);
   }
 
   /// Handler long pressed
   void _onLongPressed() {
-    _dateSubject.add(date);
-    onDateLongPressed(date);
+    _commonDateSubject.add(widget.date);
+    widget.onDateLongPressed(widget.date);
   }
 }
