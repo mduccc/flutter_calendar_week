@@ -28,7 +28,11 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             i++;
-            _controller.jumpToDate(DateTime.now().add(Duration(days: i)));
+            final newDate = DateTime.now().add(Duration(days: i));
+            _controller.jumpToDate(newDate);
+            setState(() {
+              _selectedDate = newDate;
+            });
           },
         ),
         appBar: AppBar(

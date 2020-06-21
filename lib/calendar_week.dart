@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:flutter_calendar_week/model/decoration_item.dart';
 
 part 'model/week_item.dart';
