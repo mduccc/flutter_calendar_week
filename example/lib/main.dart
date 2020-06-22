@@ -19,9 +19,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
+  final CalendarWeekController _controller = CalendarWeekController();
+
+  int i = 0;
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            i++;
+            final newDate = DateTime.now().add(Duration(days: i));
+            _controller.jumpToDate(newDate);
+            setState(() {
+              _selectedDate = newDate;
+            });
+          },
+        ),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.blue,
@@ -36,6 +49,7 @@ class _HomePageState extends State<HomePage> {
                   spreadRadius: 1)
             ]),
             child: CalendarWeek(
+              controller: _controller,
               height: 80,
               minDate: DateTime.now().add(
                 Duration(days: -365),
