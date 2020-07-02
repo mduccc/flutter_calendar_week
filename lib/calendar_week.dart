@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/model/decoration_item.dart';
+import 'package:rxdart/subjects.dart';
 
 part 'model/week_item.dart';
 
@@ -47,11 +48,17 @@ class CalendarWeek extends StatefulWidget {
   /// Calendar end at [maxDate]
   final DateTime maxDate;
 
+  /// [TextStyle] of month
+  final TextStyle monthStyle;
+
   /// [TextStyle] of day of week
   final TextStyle dayOfWeekStyle;
 
   /// [TextStyle] of weekends days */
   TextStyle weekendsStyle;
+
+  /// [Alignment] of day day of week
+  final FractionalOffset monthAlignment;
 
   /// [Alignment] of day day of week
   final FractionalOffset dayOfWeekAlignment;
@@ -89,6 +96,9 @@ class CalendarWeek extends StatefulWidget {
   /// List contain titles day of week
   final List<String> dayOfWeek;
 
+  /// List contain titles month
+  final List<String> month;
+
   /// List contain indexes of weekends from days titles list
   List<int> weekendsIndexes;
 
@@ -110,9 +120,12 @@ class CalendarWeek extends StatefulWidget {
       {@required this.maxDate,
       @required this.minDate,
       this.key,
-      this.height = 80,
+      this.height = 100,
+      this.monthStyle =
+          const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
       this.dayOfWeekStyle =
           const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+      this.monthAlignment = FractionalOffset.bottomCenter,
       this.dayOfWeekAlignment = FractionalOffset.bottomCenter,
       this.dateStyle =
           const TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
@@ -128,6 +141,7 @@ class CalendarWeek extends StatefulWidget {
       this.onDateLongPressed,
       this.backgroundColor = Colors.white,
       this.dayOfWeek = _dayOfWeekDefault,
+      this.month = _monthDefaults,
       this.weekendsIndexes = _weekendsIndexes,
       this.weekendsStyle =
           const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
@@ -155,6 +169,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// List contain weeks
   final List<_WeekItem> weeks = [];
 
+  /// Current month
+  String month = '';
+
   /// Page controller
   PageController _pageController;
 
@@ -170,7 +187,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
     /// Read from [minDate] to [maxDate[ and split to weeks
     weeks
-        .addAll(_splitToWeek(widget.minDate, widget.maxDate, widget.dayOfWeek));
+        .addAll(_splitToWeek(widget.minDate, widget.maxDate, widget.dayOfWeek, widget.month));
 
     /// [_currentWeekIndex] is index of week in [List] weeks contain today
     widget.controller
@@ -183,6 +200,8 @@ class _CalendarWeekState extends State<CalendarWeek> {
     /// Set [initialPage] is page contain today
     _pageController =
         PageController(initialPage: widget.controller._currentWeekIndex);
+
+    month = widget.month.elementAt(_today.month - 1);
   }
 
   @override
@@ -205,6 +224,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
         controller: _pageController,
         itemCount: weeks.length,
         itemBuilder: (_, i) => _week(weeks[i]),
+        onPageChanged: (i) => setState(() {
+          month = weeks[i].month;
+        }),
       ));
 
   /// Layout of week
@@ -212,6 +234,20 @@ class _CalendarWeekState extends State<CalendarWeek> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          // Month
+          Expanded(
+            flex: 5,
+            child: Align(
+              alignment: widget.monthAlignment,
+              child: _monthItem(month),
+            ),
+          ),
+
+          /// Vertical space between day of week and date
+          SizedBox(
+            height: widget.spaceBetweenLabelAndDate,
+          ),
+
           /// Day of week layout
           Expanded(
             flex: 5,
@@ -236,6 +272,21 @@ class _CalendarWeekState extends State<CalendarWeek> {
           )
         ],
       );
+
+  /// Day of week item layout
+  Widget _monthItem(String title) => Container(
+      alignment: Alignment.center,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          child: Text(
+            title,
+            style: widget.monthStyle,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ));
 
   /// Day of week layout
   Widget _dayOfWeek(List<String> dayOfWeek) => Row(
