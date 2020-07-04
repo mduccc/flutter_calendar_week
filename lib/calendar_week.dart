@@ -169,9 +169,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// List contain weeks
   final List<_WeekItem> weeks = [];
 
-  /// Current month
-  String month = '';
-
   /// Page controller
   PageController _pageController;
 
@@ -200,8 +197,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
     /// Set [initialPage] is page contain today
     _pageController =
         PageController(initialPage: widget.controller._currentWeekIndex);
-
-    month = widget.month.elementAt(_today.month - 1);
   }
 
   @override
@@ -224,9 +219,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
         controller: _pageController,
         itemCount: weeks.length,
         itemBuilder: (_, i) => _week(weeks[i]),
-        onPageChanged: (i) => setState(() {
-          month = weeks[i].month;
-        }),
       ));
 
   /// Layout of week
@@ -239,7 +231,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
             flex: 5,
             child: Align(
               alignment: widget.monthAlignment,
-              child: _monthItem(month),
+              child: _monthItem(weeks.month),
             ),
           ),
 
