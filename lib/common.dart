@@ -18,5 +18,25 @@ const List<String> _dayOfWeekDefault = [
   'SUN'
 ];
 
+/// List contain titles month
+const List<String> _monthDefaults = [
+  'JANUARY',
+  'FEBRUARY',
+  'MARCH',
+  'APRIL',
+  'MAY',
+  'JUNE',
+  'JULY',
+  'AUGUST',
+  'SEPTEMBER',
+  'OCTOBER',
+  'NOVEMBER',
+  'DECEMBER'
+];
+
+const List<int> _weekendsIndexes = [
+  5, 6
+];
+
 /// Today date time
 final _today = DateTime.now();

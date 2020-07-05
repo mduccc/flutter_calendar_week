@@ -4,7 +4,7 @@ part of '../calendar_week.dart';
 /// Return [List] contain weeks;
 
 List<_WeekItem> _splitToWeek(
-    DateTime minDate, DateTime maxDate, List<String> dayOfWeek) {
+    DateTime minDate, DateTime maxDate, List<String> dayOfWeek, List<String> _months) {
   /// Count until length day of week
   int count = 1;
 
@@ -54,7 +54,7 @@ List<_WeekItem> _splitToWeek(
 
       /// Add the week to list week
       _weeks.add(
-          _WeekItem(dayOfWeek: List.from(_dayOfWeek), days: List.from(_days)));
+          _WeekItem(month: _months.elementAt(minDateCloned.month - 1), dayOfWeek: List.from(_dayOfWeek), days: List.from(_days)));
 
       /// Clear list before add new item
       _dayOfWeek.clear();
