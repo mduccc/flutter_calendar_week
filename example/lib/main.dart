@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/calendar_week.dart';
-import 'package:flutter_calendar_week/model/decoration_item.dart';
+import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 
 void main() => runApp(MyApp());
 
@@ -67,6 +66,8 @@ class _HomePageState extends State<HomePage> {
                   _selectedDate = datetime;
                 });
               },
+              weekendsStyle:
+                  TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               dayOfWeekStyle:
                   TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
               dayOfWeekAlignment: FractionalOffset.bottomCenter,
@@ -82,6 +83,7 @@ class _HomePageState extends State<HomePage> {
               dateBackgroundColor: Colors.transparent,
               backgroundColor: Colors.white,
               dayOfWeek: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+              showMonth: true,
               spaceBetweenLabelAndDate: 0,
               dayShapeBorder: CircleBorder(),
               decorations: [
