@@ -114,6 +114,7 @@ class CalendarWeek extends StatefulWidget {
   /// Height of calendar
   final double height;
 
+  /// Page controller
   CalendarWeekController controller;
 
   CalendarWeek(
@@ -169,11 +170,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// List contain weeks
   final List<_WeekItem> weeks = [];
 
+  /// [BehaviorSubject] emit last date pressed
+  final BehaviorSubject<DateTime> _subject = BehaviorSubject<DateTime>();
+
   /// Page controller
   PageController _pageController;
 
   void _jumToDateHandler(DateTime dateTime) {
-    _commonDateSubject.add(dateTime);
+    _subject.add(dateTime);
     _pageController.animateToPage(widget.controller._currentWeekIndex,
         duration: Duration(milliseconds: 500), curve: Curves.ease);
   }
@@ -183,8 +187,8 @@ class _CalendarWeekState extends State<CalendarWeek> {
     super.initState();
 
     /// Read from [minDate] to [maxDate[ and split to weeks
-    weeks
-        .addAll(_splitToWeek(widget.minDate, widget.maxDate, widget.dayOfWeek, widget.month));
+    weeks.addAll(_splitToWeek(
+        widget.minDate, widget.maxDate, widget.dayOfWeek, widget.month));
 
     /// [_currentWeekIndex] is index of week in [List] weeks contain today
     widget.controller
@@ -294,7 +298,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
           width: 50,
           child: Text(
             title,
-            style:  widget.weekendsIndexes.indexOf(widget.dayOfWeek.indexOf(title)) != -1
+            style: widget.weekendsIndexes
+                        .indexOf(widget.dayOfWeek.indexOf(title)) !=
+                    -1
                 ? widget.weekendsStyle
                 : widget.dayOfWeekStyle,
             overflow: TextOverflow.ellipsis,
@@ -314,8 +320,8 @@ class _CalendarWeekState extends State<CalendarWeek> {
         dateStyle: _compareDate(date, _today)
             ? widget.todayDateStyle
             : date.weekday == 6 || date.weekday == 7
-              ? widget.weekendsStyle
-              : widget.dateStyle,
+                ? widget.weekendsStyle
+                : widget.dateStyle,
         pressedDateStyle: widget.pressedDateStyle,
         backgroundColor: widget.dateBackgroundColor,
         todayBackgroundColor: widget.todayBackgroundColor,
@@ -345,5 +351,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
           }
           return null;
         }(),
+        subject: _subject,
       );
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (!_subject.isClosed) _subject.close();
+  }
 }
