@@ -1,9 +1,5 @@
 part of 'calendar_week.dart';
 
-/// [BehaviorSubject] emit last date pressed
-final BehaviorSubject<DateTime> _commonDateSubject =
-    BehaviorSubject<DateTime>();
-
 /// Length of day of week
 final int _maxDayOfWeek = 7;
 
@@ -34,9 +30,7 @@ const List<String> _monthDefaults = [
   'DECEMBER'
 ];
 
-const List<int> _weekendsIndexes = [
-  5, 6
-];
+const List<int> _weekendsIndexes = [5, 6];
 
 /// Today date time
 final _today = DateTime.now();

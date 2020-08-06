@@ -35,19 +35,22 @@ class _DateItem extends StatefulWidget {
   /// Decoration [Widget]
   final Widget decoration;
 
-  _DateItem({
-    this.date,
-    this.dateStyle,
-    this.pressedDateStyle,
-    this.backgroundColor = Colors.transparent,
-    this.todayBackgroundColor = Colors.orangeAccent,
-    this.pressedBackgroundColor,
-    this.decorationAlignment = FractionalOffset.center,
-    this.dayShapeBorder,
-    this.onDatePressed,
-    this.onDateLongPressed,
-    this.decoration,
-  });
+  /// [BehaviorSubject] emit, listen last date pressed
+  final BehaviorSubject<DateTime> subject;
+
+  _DateItem(
+      {this.date,
+      this.dateStyle,
+      this.pressedDateStyle,
+      this.backgroundColor = Colors.transparent,
+      this.todayBackgroundColor = Colors.orangeAccent,
+      this.pressedBackgroundColor,
+      this.decorationAlignment = FractionalOffset.center,
+      this.dayShapeBorder,
+      this.onDatePressed,
+      this.onDateLongPressed,
+      this.decoration,
+      this.subject});
 
   @override
   __DateItemState createState() => __DateItemState();
@@ -63,7 +66,7 @@ class __DateItemState extends State<_DateItem> {
   @override
   Widget build(BuildContext context) => widget.date != null
       ? StreamBuilder(
-          stream: _commonDateSubject,
+          stream: widget.subject,
           builder: (_, data) {
             /// Set default [Background] of day
             _defaultBackgroundColor = widget.backgroundColor;
@@ -138,13 +141,13 @@ class __DateItemState extends State<_DateItem> {
 
   /// Handler pressed
   void _onPressed() {
-    _commonDateSubject.add(widget.date);
+    widget.subject.add(widget.date);
     widget.onDatePressed(widget.date);
   }
 
   /// Handler long pressed
   void _onLongPressed() {
-    _commonDateSubject.add(widget.date);
+    widget.subject.add(widget.date);
     widget.onDateLongPressed(widget.date);
   }
 }
