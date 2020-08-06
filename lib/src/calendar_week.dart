@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/model/decoration_item.dart';
+import 'package:flutter_calendar_week/src/model/decoration_item.dart';
 import 'package:rxdart/subjects.dart';
 
 part 'model/week_item.dart';
@@ -99,6 +99,9 @@ class CalendarWeek extends StatefulWidget {
   /// List contain titles month
   final List<String> month;
 
+  /// Condition show month
+  final bool showMonth;
+
   /// List contain indexes of weekends from days titles list
   List<int> weekendsIndexes;
 
@@ -143,6 +146,7 @@ class CalendarWeek extends StatefulWidget {
       this.backgroundColor = Colors.white,
       this.dayOfWeek = _dayOfWeekDefault,
       this.month = _monthDefaults,
+      this.showMonth = true,
       this.weekendsIndexes = _weekendsIndexes,
       this.weekendsStyle =
           const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
@@ -227,17 +231,18 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   /// Layout of week
   Widget _week(_WeekItem weeks) => Column(
-        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           // Month
-          Expanded(
-            flex: 5,
-            child: Align(
-              alignment: widget.monthAlignment,
-              child: _monthItem(weeks.month),
-            ),
-          ),
+          widget.showMonth
+              ? Expanded(
+                  flex: 5,
+                  child: Align(
+                    alignment: widget.monthAlignment,
+                    child: _monthItem(weeks.month),
+                  ),
+                )
+              : Container(),
 
           /// Vertical space between day of week and date
           SizedBox(
@@ -262,7 +267,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
           Expanded(
             flex: 10,
             child: Align(
-              alignment: widget.dateAlignment,
+              alignment: FractionalOffset.center,
               child: _dates(weeks.days),
             ),
           )

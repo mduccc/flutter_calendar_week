@@ -5,7 +5,7 @@ A calendar view by week
 - [x] Jump to date
 
 ##### IOS | Android:
-<img src="https://i.imgur.com/MED4xrc.png" width="40%" height="40%"/> <img src="https://i.imgur.com/1WXg1o6.gif" width="43.3%" height="42.45%"/>
+<img src="https://i.imgur.com/Cg3AWtS.png" width="40%" height="40%"/> <img src="https://i.imgur.com/1WXg1o6.gif" width="43.3%" height="42.45%"/>
 
 <br>
 
@@ -20,17 +20,12 @@ dependencies:
   flutter_calendar_week:
     git:
       url: https://github.com/mduccc/flutter_calendar_week
-      ref: 0.2.1+1
-```
-
-```Dart
-import 'package:flutter_calendar_week/calendar_week.dart';
+      ref: 0.3.0
 ```
 
 ```Dart
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/calendar_week.dart';
-import 'package:flutter_calendar_week/model/decoration_item.dart';
+import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 
 void main() => runApp(MyApp());
 
@@ -58,7 +53,11 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             i++;
-            _controller.jumpToDate(DateTime.now().add(Duration(days: i)));
+            final newDate = DateTime.now().add(Duration(days: i));
+            _controller.jumpToDate(newDate);
+            setState(() {
+              _selectedDate = newDate;
+            });
           },
         ),
         appBar: AppBar(
@@ -76,7 +75,7 @@ class _HomePageState extends State<HomePage> {
             ]),
             child: CalendarWeek(
               controller: _controller,
-              height: 80,
+              height: 100,
               minDate: DateTime.now().add(
                 Duration(days: -365),
               ),
@@ -93,6 +92,8 @@ class _HomePageState extends State<HomePage> {
                   _selectedDate = datetime;
                 });
               },
+              weekendsStyle:
+                  TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               dayOfWeekStyle:
                   TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
               dayOfWeekAlignment: FractionalOffset.bottomCenter,
@@ -108,6 +109,7 @@ class _HomePageState extends State<HomePage> {
               dateBackgroundColor: Colors.transparent,
               backgroundColor: Colors.white,
               dayOfWeek: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+              showMonth: true,
               spaceBetweenLabelAndDate: 0,
               dayShapeBorder: CircleBorder(),
               decorations: [
