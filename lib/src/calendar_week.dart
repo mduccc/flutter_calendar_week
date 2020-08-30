@@ -324,7 +324,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
         date: date,
         dateStyle: _compareDate(date, _today)
             ? widget.todayDateStyle
-            : date.weekday == 6 || date.weekday == 7
+            : date != null && (date.weekday== 6 || date.weekday == 7)
                 ? widget.weekendsStyle
                 : widget.dateStyle,
         pressedDateStyle: widget.pressedDateStyle,
