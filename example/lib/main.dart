@@ -47,7 +47,6 @@ class _HomePageState extends State<HomePage> {
                   spreadRadius: 1)
             ]),
             child: CalendarWeek(
-              onWeekChanged: () {},
               controller: _controller,
               height: 100,
               minDate: DateTime.now().add(
@@ -66,6 +65,7 @@ class _HomePageState extends State<HomePage> {
                   _selectedDate = datetime;
                 });
               },
+              onWeekChanged: () {},
               weekendsStyle:
                   TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               dayOfWeekStyle:

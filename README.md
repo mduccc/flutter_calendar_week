@@ -20,7 +20,7 @@ dependencies:
   flutter_calendar_week:
     git:
       url: https://github.com/mduccc/flutter_calendar_week
-      ref: 0.4.0
+      ref: 0.4.1
 ```
 
 ```Dart
@@ -92,6 +92,7 @@ class _HomePageState extends State<HomePage> {
                   _selectedDate = datetime;
                 });
               },
+              onWeekChanged: () {},
               weekendsStyle:
                   TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               dayOfWeekStyle:
