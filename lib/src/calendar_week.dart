@@ -165,9 +165,6 @@ class CalendarWeek extends StatefulWidget {
         ..clear()
         ..addAll(_dayOfWeekDefault);
     }
-
-    /// Init default controller if it's null
-    controller ??= CalendarWeekController();
   }
 
   @override
@@ -184,6 +181,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// Page controller
   PageController _pageController;
 
+  CalendarWeekController get _calendarController =>
+      widget.controller ?? CalendarWeekController();
+
   void _jumToDateHandler(DateTime dateTime) {
     _subject.add(dateTime);
     _pageController.animateToPage(widget.controller._currentWeekIndex,
@@ -199,7 +199,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
         widget.minDate, widget.maxDate, widget.dayOfWeek, widget.month));
 
     /// [_currentWeekIndex] is index of week in [List] weeks contain today
-    widget.controller
+    _calendarController
       .._currentWeekIndex = findCurrentWeekIndexByDate(_today, weeks)
       .._weeks.clear()
       .._weeks.addAll(weeks)
@@ -208,7 +208,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
     /// Init Page controller
     /// Set [initialPage] is page contain today
     _pageController =
-        PageController(initialPage: widget.controller._currentWeekIndex);
+        PageController(initialPage: _calendarController._currentWeekIndex);
   }
 
   @override
