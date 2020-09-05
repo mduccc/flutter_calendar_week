@@ -120,6 +120,9 @@ class CalendarWeek extends StatefulWidget {
   /// Page controller
   CalendarWeekController controller;
 
+  /// [Callback] changed week
+  final Function onWeekChanged;
+
   CalendarWeek(
       {@required this.maxDate,
       @required this.minDate,
@@ -153,7 +156,8 @@ class CalendarWeek extends StatefulWidget {
       this.spaceBetweenLabelAndDate = 0,
       this.dayShapeBorder = const CircleBorder(),
       this.decorations = const [],
-      this.controller})
+      this.controller,
+      this.onWeekChanged})
       : super(key: key) {
     /// Fit day of week
     if (dayOfWeek.length < 7) {
@@ -161,9 +165,6 @@ class CalendarWeek extends StatefulWidget {
         ..clear()
         ..addAll(_dayOfWeekDefault);
     }
-
-    /// Init default controller if it's null
-    controller ??= CalendarWeekController();
   }
 
   @override
@@ -180,6 +181,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// Page controller
   PageController _pageController;
 
+  CalendarWeekController get _calendarController =>
+      widget.controller ?? CalendarWeekController();
+
   void _jumToDateHandler(DateTime dateTime) {
     _subject.add(dateTime);
     _pageController.animateToPage(widget.controller._currentWeekIndex,
@@ -195,7 +199,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
         widget.minDate, widget.maxDate, widget.dayOfWeek, widget.month));
 
     /// [_currentWeekIndex] is index of week in [List] weeks contain today
-    widget.controller
+    _calendarController
       .._currentWeekIndex = findCurrentWeekIndexByDate(_today, weeks)
       .._weeks.clear()
       .._weeks.addAll(weeks)
@@ -204,7 +208,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
     /// Init Page controller
     /// Set [initialPage] is page contain today
     _pageController =
-        PageController(initialPage: widget.controller._currentWeekIndex);
+        PageController(initialPage: _calendarController._currentWeekIndex);
   }
 
   @override
@@ -226,6 +230,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       child: PageView.builder(
         controller: _pageController,
         itemCount: weeks.length,
+        onPageChanged: (_) => widget.onWeekChanged(),
         itemBuilder: (_, i) => _week(weeks[i]),
       ));
 
@@ -324,7 +329,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
         date: date,
         dateStyle: _compareDate(date, _today)
             ? widget.todayDateStyle
-            : date != null && (date.weekday== 6 || date.weekday == 7)
+            : date != null && (date.weekday == 6 || date.weekday == 7)
                 ? widget.weekendsStyle
                 : widget.dateStyle,
         pressedDateStyle: widget.pressedDateStyle,
