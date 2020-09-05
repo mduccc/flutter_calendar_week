@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
                   spreadRadius: 1)
             ]),
             child: CalendarWeek(
+              onWeekChanged: () {},
               controller: _controller,
               height: 100,
               minDate: DateTime.now().add(

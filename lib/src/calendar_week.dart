@@ -120,6 +120,9 @@ class CalendarWeek extends StatefulWidget {
   /// Page controller
   CalendarWeekController controller;
 
+  /// [Callback] changed week
+  final Function onWeekChanged;
+
   CalendarWeek(
       {@required this.maxDate,
       @required this.minDate,
@@ -153,7 +156,8 @@ class CalendarWeek extends StatefulWidget {
       this.spaceBetweenLabelAndDate = 0,
       this.dayShapeBorder = const CircleBorder(),
       this.decorations = const [],
-      this.controller})
+      this.controller,
+      this.onWeekChanged})
       : super(key: key) {
     /// Fit day of week
     if (dayOfWeek.length < 7) {
@@ -226,6 +230,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       child: PageView.builder(
         controller: _pageController,
         itemCount: weeks.length,
+        onPageChanged: (_) => widget.onWeekChanged(),
         itemBuilder: (_, i) => _week(weeks[i]),
       ));
 
@@ -324,7 +329,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
         date: date,
         dateStyle: _compareDate(date, _today)
             ? widget.todayDateStyle
-            : date != null && (date.weekday== 6 || date.weekday == 7)
+            : date != null && (date.weekday == 6 || date.weekday == 7)
                 ? widget.weekendsStyle
                 : widget.dateStyle,
         pressedDateStyle: widget.pressedDateStyle,
