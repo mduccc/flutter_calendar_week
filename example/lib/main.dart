@@ -19,7 +19,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
   final CalendarWeekController _controller = CalendarWeekController();
-
   int i = 0;
 
   @override

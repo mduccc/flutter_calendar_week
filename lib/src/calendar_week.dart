@@ -39,9 +39,6 @@ class CalendarWeekController {
 
 // ignore: must_be_immutable
 class CalendarWeek extends StatefulWidget {
-  /// Key
-  final Key key;
-
   /// Calendar start from [minDate]
   final DateTime minDate;
 
@@ -118,54 +115,112 @@ class CalendarWeek extends StatefulWidget {
   final double height;
 
   /// Page controller
-  CalendarWeekController controller;
+  final CalendarWeekController controller;
 
   /// [Callback] changed week
   final Function onWeekChanged;
 
-  CalendarWeek(
-      {@required this.maxDate,
-      @required this.minDate,
-      this.key,
-      this.height = 100,
-      this.monthStyle =
-          const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-      this.dayOfWeekStyle =
-          const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-      this.monthAlignment = FractionalOffset.bottomCenter,
-      this.dayOfWeekAlignment = FractionalOffset.bottomCenter,
-      this.dateStyle =
-          const TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
-      this.dateAlignment = FractionalOffset.topCenter,
-      this.todayDateStyle =
-          const TextStyle(color: Colors.orange, fontWeight: FontWeight.w400),
-      this.todayBackgroundColor = Colors.black12,
-      this.pressedDateBackgroundColor = Colors.blue,
-      this.pressedDateStyle =
-          const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
-      this.dateBackgroundColor = Colors.transparent,
+  CalendarWeek._(
+      this.maxDate,
+      this.minDate,
+      Key key,
+      this.height,
+      this.monthStyle,
+      this.dayOfWeekStyle,
+      this.monthAlignment,
+      this.dayOfWeekAlignment,
+      this.dateStyle,
+      this.dateAlignment,
+      this.todayDateStyle,
+      this.todayBackgroundColor,
+      this.pressedDateBackgroundColor,
+      this.pressedDateStyle,
+      this.dateBackgroundColor,
       this.onDatePressed,
       this.onDateLongPressed,
-      this.backgroundColor = Colors.white,
-      this.dayOfWeek = _dayOfWeekDefault,
-      this.month = _monthDefaults,
-      this.showMonth = true,
-      this.weekendsIndexes = _weekendsIndexes,
-      this.weekendsStyle =
-          const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
-      this.spaceBetweenLabelAndDate = 0,
-      this.dayShapeBorder = const CircleBorder(),
-      this.decorations = const [],
+      this.backgroundColor,
+      this.dayOfWeek,
+      this.month,
+      this.showMonth,
+      this.weekendsIndexes,
+      this.weekendsStyle,
+      this.spaceBetweenLabelAndDate,
+      this.dayShapeBorder,
+      this.decorations,
       this.controller,
-      this.onWeekChanged})
+      this.onWeekChanged)
       : super(key: key) {
-    /// Fit day of week
     if (dayOfWeek.length < 7) {
       dayOfWeek
         ..clear()
         ..addAll(_dayOfWeekDefault);
     }
   }
+
+  factory CalendarWeek(
+          {DateTime maxDate,
+          DateTime minDate,
+          Key key,
+          double height,
+          TextStyle monthStyle,
+          TextStyle dayOfWeekStyle,
+          FractionalOffset monthAlignment,
+          FractionalOffset dayOfWeekAlignment,
+          TextStyle dateStyle,
+          FractionalOffset dateAlignment,
+          TextStyle todayDateStyle,
+          Color todayBackgroundColor,
+          Color pressedDateBackgroundColor,
+          TextStyle pressedDateStyle,
+          Color dateBackgroundColor,
+          Function(DateTime) onDatePressed,
+          Function(DateTime) onDateLongPressed,
+          Color backgroundColor,
+          List<String> dayOfWeek,
+          List<String> month,
+          bool showMonth,
+          List<int> weekendsIndexes,
+          TextStyle weekendsStyle,
+          double spaceBetweenLabelAndDate,
+          CircleBorder dayShapeBorder,
+          List<DecorationItem> decorations,
+          CalendarWeekController controller,
+          Function onWeekChanged}) =>
+      CalendarWeek._(
+          maxDate ?? DateTime.now().add(Duration(days: 180)),
+          minDate ?? DateTime.now().add(Duration(days: -180)),
+          key,
+          height ?? 100,
+          monthStyle ??
+              TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+          dayOfWeekStyle ??
+              TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+          monthAlignment ?? FractionalOffset.bottomCenter,
+          dayOfWeekAlignment ?? FractionalOffset.bottomCenter,
+          dateStyle ??
+              TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
+          dateAlignment ?? FractionalOffset.topCenter,
+          todayDateStyle ??
+              TextStyle(color: Colors.orange, fontWeight: FontWeight.w400),
+          todayBackgroundColor ?? Colors.black12,
+          pressedDateBackgroundColor ?? Colors.blue,
+          pressedDateStyle ??
+              TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+          dateBackgroundColor ?? Colors.transparent,
+          onDatePressed ?? (DateTime date) {},
+          onDateLongPressed ?? (DateTime date) {},
+          backgroundColor ?? Colors.white,
+          dayOfWeek ?? _dayOfWeekDefault,
+          month ?? _monthDefaults,
+          showMonth ?? true,
+          weekendsIndexes ?? _weekendsIndexes,
+          weekendsStyle ??
+              TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+          spaceBetweenLabelAndDate ?? 0,
+          dayShapeBorder ?? CircleBorder(),
+          decorations ?? [],
+          controller,
+          onWeekChanged ?? () {});
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
@@ -181,8 +236,10 @@ class _CalendarWeekState extends State<CalendarWeek> {
   /// Page controller
   PageController _pageController;
 
+  CalendarWeekController _defaultCalendarController = CalendarWeekController();
+
   CalendarWeekController get _calendarController =>
-      widget.controller ?? CalendarWeekController();
+      widget.controller ?? _defaultCalendarController;
 
   void _jumToDateHandler(DateTime dateTime) {
     _subject.add(dateTime);
