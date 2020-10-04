@@ -1,0 +1,23 @@
+analyzer:
+  errors:
+    - camel_case_types: error
+    - library_names: error
+    - file_names: error
+    - library_prefixes: error
+    - non_constant_identifier_names: error
+    - directives_ordering: error
+    - lines_longer_than_80_chars: error
+    - unnecessary_lambdas: error
+    - prefer_expression_function_bodies: error
+
+linter:
+  rules:
+    - camel_case_types
+    - library_names
+    - file_names
+    - library_prefixes
+    - non_constant_identifier_names
+    - directives_ordering
+    - lines_longer_than_80_chars
+    - unnecessary_lambdas
+    - prefer_expression_function_bodies

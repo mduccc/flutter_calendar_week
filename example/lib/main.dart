@@ -50,10 +50,10 @@ class _HomePageState extends State<HomePage> {
               controller: _controller,
               height: 100,
               minDate: DateTime.now().add(
-                Duration(days: -365),
+                Duration(days: -7),
               ),
               maxDate: DateTime.now().add(
-                Duration(days: 365),
+                Duration(days: 7),
               ),
               onDatePressed: (DateTime datetime) {
                 setState(() {
@@ -70,10 +70,8 @@ class _HomePageState extends State<HomePage> {
                   TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               dayOfWeekStyle:
                   TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-              dayOfWeekAlignment: FractionalOffset.bottomCenter,
               dateStyle:
                   TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
-              dateAlignment: FractionalOffset.topCenter,
               todayDateStyle:
                   TextStyle(color: Colors.orange, fontWeight: FontWeight.w400),
               todayBackgroundColor: Colors.black.withOpacity(0.15),
@@ -83,8 +81,24 @@ class _HomePageState extends State<HomePage> {
               dateBackgroundColor: Colors.transparent,
               backgroundColor: Colors.white,
               dayOfWeek: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+              month: [
+                'JANUARY',
+                'FEBRUARY',
+                'MARCH',
+                'APRIL',
+                'MAY',
+                'JUNE',
+                'JULY',
+                'AUGUST',
+                'SEPTEMBER',
+                'OCTOBER',
+                'NOVEMBER',
+                'DECEMBER'
+              ],
               showMonth: true,
-              spaceBetweenLabelAndDate: 0,
+              monthAlignment: FractionalOffset.center,
+              marginMonth: EdgeInsets.symmetric(vertical: 4),
+              marginDayOfWeek: EdgeInsets.symmetric(vertical: 4),
               dayShapeBorder: CircleBorder(),
               decorations: [
                 DecorationItem(

@@ -1,6 +1,11 @@
-part of 'calendar_week.dart';
+import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
-class _DateItem extends StatefulWidget {
+class DateItem extends StatefulWidget {
+  /// Date
+  final DateTime today;
+
   /// Date
   final DateTime date;
 
@@ -38,25 +43,27 @@ class _DateItem extends StatefulWidget {
   /// [BehaviorSubject] emit, listen last date pressed
   final BehaviorSubject<DateTime> subject;
 
-  _DateItem(
-      {this.date,
-      this.dateStyle,
-      this.pressedDateStyle,
-      this.backgroundColor = Colors.transparent,
-      this.todayBackgroundColor = Colors.orangeAccent,
-      this.pressedBackgroundColor,
-      this.decorationAlignment = FractionalOffset.center,
-      this.dayShapeBorder,
-      this.onDatePressed,
-      this.onDateLongPressed,
-      this.decoration,
-      this.subject});
+  DateItem({
+    @required this.today,
+    @required this.date,
+    @required this.subject,
+    this.dateStyle,
+    this.pressedDateStyle,
+    this.backgroundColor = Colors.transparent,
+    this.todayBackgroundColor = Colors.orangeAccent,
+    this.pressedBackgroundColor,
+    this.decorationAlignment = FractionalOffset.center,
+    this.dayShapeBorder,
+    this.onDatePressed,
+    this.onDateLongPressed,
+    this.decoration,
+  });
 
   @override
   __DateItemState createState() => __DateItemState();
 }
 
-class __DateItemState extends State<_DateItem> {
+class __DateItemState extends State<DateItem> {
   /// Default [Background] of day
   Color _defaultBackgroundColor;
 
@@ -75,11 +82,11 @@ class __DateItemState extends State<_DateItem> {
             _defaultTextStyle = widget.dateStyle;
 
             /// If today, set [Background] of today
-            if (_compareDate(widget.date, _today)) {
+            if (compareDate(widget.date, widget.today)) {
               _defaultBackgroundColor = widget.todayBackgroundColor;
             } else if (data != null && !data.hasError && data.hasData) {
               final DateTime dateSelected = data.data;
-              if (_compareDate(widget.date, dateSelected)) {
+              if (compareDate(widget.date, dateSelected)) {
                 _defaultBackgroundColor = widget.pressedBackgroundColor;
                 _defaultTextStyle = widget.pressedDateStyle;
               }
@@ -87,7 +94,10 @@ class __DateItemState extends State<_DateItem> {
             return _body();
           },
         )
-      : Container();
+      : Container(
+          width: 50,
+          height: 50,
+        );
 
   /// Body layout
   Widget _body() => Container(
