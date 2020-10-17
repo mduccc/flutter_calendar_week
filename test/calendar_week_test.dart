@@ -72,9 +72,9 @@ void main() {
       controller.jumpToDate(selectDateA);
       int diff = controller.selectedDate.difference(selectDateA).inDays;
       expect(diff, 0);
-      expect(controller.rageWeekDate[0].day <= selectDateA.day, true);
+      expect(controller.rangeWeekDate[0].day <= selectDateA.day, true);
       expect(
-          controller.rageWeekDate[controller.rageWeekDate.length - 1].day >=
+          controller.rangeWeekDate[controller.rangeWeekDate.length - 1].day >=
               selectDateA.day,
           true);
 

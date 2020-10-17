@@ -14,21 +14,26 @@ class CalendarWeekController {
 
   /// Return [true] if attached to [CalendarWeek] widget
   bool get hasClient => _hasClient;
+
+  /// Store a selected date
   DateTime _selectedDate;
 
-  /// Get [DateTime] selected;
+  /// Get [_selectedDate] selected;
   DateTime get selectedDate => _selectedDate;
 
-  /// Contain [DateTime] of week
-  List<DateTime> get rageWeekDate => _weeks.isNotEmpty
+  /// get [_weeks]
+  List<DateTime> get rangeWeekDate => _weeks.isNotEmpty
       ? _weeks[_currentWeekIndex].days.where((ele) => ele != null).toList()
       : [];
 
-  /// [Callback] update widget
+  /// [Callback] for update widget event
   Function(DateTime) _widgetJumpToDate;
 
   /// Index of week display on the screen
   int _currentWeekIndex = 0;
+
+  /// Store a list [DateTime] of week display on the screen
+  /// [selectedDate] is inside it
   final List<WeekItem> _weeks = [];
 
   /// [jumpToDate] show week contain [date] on the screen
@@ -36,19 +41,19 @@ class CalendarWeekController {
     /// Find [_newCurrentWeekIndex] corresponding new [dateTime]
     final _newCurrentWeekIndex = findCurrentWeekIndexByDate(date, _weeks);
 
-    /// If has matched, update [_currentWeekIndex] and update Widget
+    /// If has matched, update [_currentWeekIndex], [_selectedDate]
+    /// and call [_widgetJumpToDate] for update widget
     if (_newCurrentWeekIndex != -1) {
       _currentWeekIndex = _newCurrentWeekIndex;
 
       _selectedDate = date;
 
       /// Call [_widgetJumpToDate] for update Widget
-      _widgetJumpToDate(date);
+      _widgetJumpToDate(_selectedDate);
     }
   }
 }
 
-// ignore: must_be_immutable
 class CalendarWeek extends StatefulWidget {
   /// Calendar start from [minDate]
   final DateTime minDate;
@@ -56,56 +61,56 @@ class CalendarWeek extends StatefulWidget {
   /// Calendar end at [maxDate]
   final DateTime maxDate;
 
-  /// [TextStyle] of month
+  /// Style of months
   final TextStyle monthStyle;
 
-  /// [TextStyle] of day of week
+  /// Style of day of week
   final TextStyle dayOfWeekStyle;
 
-  /// [TextStyle] of weekends days */
-  TextStyle weekendsStyle;
+  /// Style of weekends days 
+  final TextStyle weekendsStyle;
 
-  /// [Alignment] of day day of week
+  /// Alignment of day day of week
   final FractionalOffset monthAlignment;
 
-  /// [TextStyle] of date
+  /// Style of dates
   final TextStyle dateStyle;
 
-  /// [TextStyle] of today
+  /// Specify a style for today
   final TextStyle todayDateStyle;
 
-  /// [Background] of today
+  /// Specify a background for today
   final Color todayBackgroundColor;
 
-  /// [Background] of date after pressed
+  /// Specify background for date after pressed
   final Color datePressedBackgroundColor;
 
-  /// [TextStyle] of date after pressed
+  /// Specify a style for date after pressed
   final TextStyle datePressedStyle;
 
-  /// [Background] of date
+  /// Background for dates
   final Color dateBackgroundColor;
 
-  /// [Callback] function after pressed on date
+  /// [Callback] function for press event
   final void Function(DateTime) onDatePressed;
 
-  /// [Callback] function after long pressed on date
+  /// [Callback] function for long press even
   final void Function(DateTime) onDateLongPressed;
 
-  /// [Background] color of calendar
+  /// Background color of calendar
   final Color backgroundColor;
 
   /// List contain titles day of week
   final List<String> daysOfWeek;
 
-  /// List contain titles month
+  /// List contain title months
   final List<String> months;
 
   /// Condition show month
   final bool monthDisplay;
 
   /// List contain indexes of weekends from days titles list
-  List<int> weekendsIndexes;
+  final List<int> weekendsIndexes;
 
   /// Margin day of week row
   final EdgeInsets marginDayOfWeek;
@@ -113,7 +118,7 @@ class CalendarWeek extends StatefulWidget {
   /// Margin month row
   final EdgeInsets marginMonth;
 
-  /// [ShapeBorder] of day
+  /// Shape of day
   final ShapeBorder dayShapeBorder;
 
   /// List of decorations
@@ -125,7 +130,7 @@ class CalendarWeek extends StatefulWidget {
   /// Page controller
   final CalendarWeekController controller;
 
-  /// [Callback] changed week
+  /// [Callback] changed week event
   final Function() onWeekChanged;
 
   CalendarWeek._(
@@ -156,13 +161,14 @@ class CalendarWeek extends StatefulWidget {
       this.decorations,
       this.controller,
       this.onWeekChanged)
-      : super(key: key) {
-    if (daysOfWeek.length < 7) {
-      daysOfWeek
-        ..clear()
-        ..addAll(dayOfWeekDefault);
-    }
-  }
+      : assert(minDate != null),
+        assert(maxDate != null),
+        assert(daysOfWeek != null),
+        assert(months != null),
+        assert(daysOfWeek.length == 7),
+        assert(months.length == 12),
+        assert(minDate.isBefore(maxDate)),
+        super(key: key);
 
   factory CalendarWeek(
           {Key key,
@@ -253,15 +259,19 @@ class _CalendarWeekState extends State<CalendarWeek> {
   }
 
   void _setUp() {
-    /// [_currentWeekIndex] is index of week in [List] weeks contain today
+    assert(_calendarController.hasClient == false);
     _calendarController
       .._weeks.clear()
       .._weeks.addAll(separateWeeks(
           widget.minDate, widget.maxDate, widget.daysOfWeek, widget.months))
+
+      /// [_currentWeekIndex] is index of week in [List] weeks contain today
+
       .._currentWeekIndex =
           findCurrentWeekIndexByDate(_today, _calendarController._weeks)
       .._selectedDate = _today
-      .._widgetJumpToDate = _jumToDateHandler;
+      .._widgetJumpToDate = _jumToDateHandler
+      .._hasClient = true;
 
     /// Init Page controller
     /// Set [initialPage] is page contain today
@@ -400,22 +410,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
         }(),
         subject: _subject,
       );
-
-  @override
-  void didUpdateWidget(CalendarWeek oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    /// Ensure [minDate] before [maxDate]
-    assert(
-        widget.minDate.isBefore(widget.maxDate),
-        'minDate much before maxDate,'
-        ' please fix it before show the CalendarWeek');
-
-    if (oldWidget.minDate != widget.minDate ||
-        oldWidget.maxDate != widget.maxDate) {
-      // _update();
-    }
-  }
 
   @override
   void dispose() {

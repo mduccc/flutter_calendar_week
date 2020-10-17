@@ -3,44 +3,43 @@ import 'package:rxdart/rxdart.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
 class DateItem extends StatefulWidget {
-  /// Date
+  /// Today
   final DateTime today;
 
-  /// Date
+  /// Date of item
   final DateTime date;
 
-  /// [TextStyle] of day
+  /// Style of [date]
   final TextStyle dateStyle;
 
-  /// [TextStyle] of day after pressed
+  /// Style of day after pressed
   final TextStyle pressedDateStyle;
 
-  /// [Background] of day
+  /// Background
   final Color backgroundColor;
 
-  /// [Background] of today
+  /// Specify a background if [date] is [today]
   final Color todayBackgroundColor;
 
-  /// [Background] of day after pressed
-
+  /// Specify a background after pressed
   final Color pressedBackgroundColor;
 
-  /// [Alignment] of decoration
+  /// Alignment a decoration
   final Alignment decorationAlignment;
 
-  /// [ShapeBorder] of day
+  /// Specify a shape
   final ShapeBorder dayShapeBorder;
 
-  /// [Callback] function after pressed on date
+  /// [Callback] function for press event
   final void Function(DateTime) onDatePressed;
 
-  /// [Callback] function after long pressed on date
+  /// [Callback] function for long press event
   final void Function(DateTime) onDateLongPressed;
 
-  /// Decoration [Widget]
+  /// Decoration widget
   final Widget decoration;
 
-  /// [BehaviorSubject] emit, listen last date pressed
+  /// [BehaviorSubject] for emit, listen last date pressed
   final BehaviorSubject<DateTime> subject;
 
   DateItem({
@@ -64,10 +63,10 @@ class DateItem extends StatefulWidget {
 }
 
 class __DateItemState extends State<DateItem> {
-  /// Default [Background] of day
+  /// Default background
   Color _defaultBackgroundColor;
 
-  /// Default [TextStyle] of day
+  /// Default style
   TextStyle _defaultTextStyle;
 
   @override
@@ -75,13 +74,13 @@ class __DateItemState extends State<DateItem> {
       ? StreamBuilder(
           stream: widget.subject,
           builder: (_, data) {
-            /// Set default [Background] of day
+            /// Set default each [builder] is called 
             _defaultBackgroundColor = widget.backgroundColor;
 
-            /// Set default [TextStyle] of day
+            /// Set default style each [builder] is called 
             _defaultTextStyle = widget.dateStyle;
 
-            /// If today, set [Background] of today
+            /// Check and set [Background] of today
             if (compareDate(widget.date, widget.today)) {
               _defaultBackgroundColor = widget.todayBackgroundColor;
             } else if (data != null && !data.hasError && data.hasData) {
@@ -149,13 +148,13 @@ class __DateItemState extends State<DateItem> {
                 : Container()),
       );
 
-  /// Handler pressed
+  /// Handler press event
   void _onPressed() {
     widget.subject.add(widget.date);
     widget.onDatePressed(widget.date);
   }
 
-  /// Handler long pressed
+  /// Handler long press event
   void _onLongPressed() {
     widget.subject.add(widget.date);
     widget.onDateLongPressed(widget.date);
