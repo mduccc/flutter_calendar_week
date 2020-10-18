@@ -10,6 +10,10 @@ import 'package:flutter_calendar_week/src/strings.dart';
 import 'package:rxdart/subjects.dart';
 
 class CalendarWeekController {
+  /// Today date time
+  DateTime _today = DateTime.now();
+
+  /// Store hast attach to a client state
   bool _hasClient = false;
 
   /// Return [true] if attached to [CalendarWeek] widget
@@ -19,7 +23,7 @@ class CalendarWeekController {
   DateTime _selectedDate;
 
   /// Get [_selectedDate] selected;
-  DateTime get selectedDate => _selectedDate;
+  DateTime get selectedDate => _selectedDate ?? _today;
 
   /// get [_weeks]
   List<DateTime> get rangeWeekDate => _weeks.isNotEmpty
@@ -67,7 +71,7 @@ class CalendarWeek extends StatefulWidget {
   /// Style of day of week
   final TextStyle dayOfWeekStyle;
 
-  /// Style of weekends days 
+  /// Style of weekends days
   final TextStyle weekendsStyle;
 
   /// Alignment of day day of week
@@ -238,9 +242,6 @@ class CalendarWeek extends StatefulWidget {
 }
 
 class _CalendarWeekState extends State<CalendarWeek> {
-  /// Today date time
-  DateTime _today = DateTime.now();
-
   /// [BehaviorSubject] emit last date pressed
   final BehaviorSubject<DateTime> _subject = BehaviorSubject<DateTime>();
 
@@ -255,7 +256,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
   void _jumToDateHandler(DateTime dateTime) {
     _subject.add(dateTime);
     _pageController.animateToPage(widget.controller._currentWeekIndex,
-        duration: Duration(milliseconds: 500), curve: Curves.ease);
+        duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   void _setUp() {
@@ -267,9 +268,8 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
       /// [_currentWeekIndex] is index of week in [List] weeks contain today
 
-      .._currentWeekIndex =
-          findCurrentWeekIndexByDate(_today, _calendarController._weeks)
-      .._selectedDate = _today
+      .._currentWeekIndex = findCurrentWeekIndexByDate(
+          _calendarController._today, _calendarController._weeks)
       .._widgetJumpToDate = _jumToDateHandler
       .._hasClient = true;
 
@@ -366,9 +366,9 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   /// Date item layout
   Widget _dateItem(DateTime date) => DateItem(
-        today: _today,
+        today: _calendarController._today,
         date: date,
-        dateStyle: compareDate(date, _today)
+        dateStyle: compareDate(date, _calendarController._today)
             ? widget.todayDateStyle
             : date != null && (date.weekday == 6 || date.weekday == 7)
                 ? widget.weekendsStyle
