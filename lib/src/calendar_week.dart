@@ -36,8 +36,7 @@ class CalendarWeekController {
   /// Index of week display on the screen
   int _currentWeekIndex = 0;
 
-  /// Store a list [DateTime] of week display on the screen
-  /// [selectedDate] is inside it
+  /// Store a list [DateTime] of weeks display on the screen
   final List<WeekItem> _weeks = [];
 
   /// [jumpToDate] show week contain [date] on the screen
