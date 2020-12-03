@@ -1,10 +1,8 @@
-part of 'calendar_week.dart';
-
 /// Length of day of week
-final int _maxDayOfWeek = 7;
+final int maxDayOfWeek = 7;
 
 /// List contain day of week
-const List<String> _dayOfWeekDefault = [
+const List<String> dayOfWeekDefault = [
   'MON',
   'TUE',
   'WED',
@@ -15,7 +13,7 @@ const List<String> _dayOfWeekDefault = [
 ];
 
 /// List contain titles month
-const List<String> _monthDefaults = [
+const List<String> monthDefaults = [
   'JANUARY',
   'FEBRUARY',
   'MARCH',
@@ -30,7 +28,4 @@ const List<String> _monthDefaults = [
   'DECEMBER'
 ];
 
-const List<int> _weekendsIndexes = [5, 6];
-
-/// Today date time
-final _today = DateTime.now();
+const List<int> weekendsIndexesDefault = [5, 6];

@@ -1,66 +1,72 @@
-part of 'calendar_week.dart';
+import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
-class _DateItem extends StatefulWidget {
-  /// Date
+class DateItem extends StatefulWidget {
+  /// Today
+  final DateTime today;
+
+  /// Date of item
   final DateTime date;
 
-  /// [TextStyle] of day
+  /// Style of [date]
   final TextStyle dateStyle;
 
-  /// [TextStyle] of day after pressed
+  /// Style of day after pressed
   final TextStyle pressedDateStyle;
 
-  /// [Background] of day
+  /// Background
   final Color backgroundColor;
 
-  /// [Background] of today
+  /// Specify a background if [date] is [today]
   final Color todayBackgroundColor;
 
-  /// [Background] of day after pressed
-
+  /// Specify a background after pressed
   final Color pressedBackgroundColor;
 
-  /// [Alignment] of decoration
+  /// Alignment a decoration
   final Alignment decorationAlignment;
 
-  /// [ShapeBorder] of day
+  /// Specify a shape
   final ShapeBorder dayShapeBorder;
 
-  /// [Callback] function after pressed on date
+  /// [Callback] function for press event
   final void Function(DateTime) onDatePressed;
 
-  /// [Callback] function after long pressed on date
+  /// [Callback] function for long press event
   final void Function(DateTime) onDateLongPressed;
 
-  /// Decoration [Widget]
+  /// Decoration widget
   final Widget decoration;
 
-  /// [BehaviorSubject] emit, listen last date pressed
+  /// [BehaviorSubject] for emit, listen last date pressed
   final BehaviorSubject<DateTime> subject;
 
-  _DateItem(
-      {this.date,
-      this.dateStyle,
-      this.pressedDateStyle,
-      this.backgroundColor = Colors.transparent,
-      this.todayBackgroundColor = Colors.orangeAccent,
-      this.pressedBackgroundColor,
-      this.decorationAlignment = FractionalOffset.center,
-      this.dayShapeBorder,
-      this.onDatePressed,
-      this.onDateLongPressed,
-      this.decoration,
-      this.subject});
+  DateItem({
+    @required this.today,
+    @required this.date,
+    @required this.subject,
+    this.dateStyle,
+    this.pressedDateStyle,
+    this.backgroundColor = Colors.transparent,
+    this.todayBackgroundColor = Colors.orangeAccent,
+    this.pressedBackgroundColor,
+    this.decorationAlignment = FractionalOffset.center,
+    this.dayShapeBorder,
+    this.onDatePressed,
+    this.onDateLongPressed,
+    this.decoration,
+  });
 
   @override
   __DateItemState createState() => __DateItemState();
 }
 
-class __DateItemState extends State<_DateItem> {
-  /// Default [Background] of day
+class __DateItemState extends State<DateItem> {
+  /// Default background
   Color _defaultBackgroundColor;
 
-  /// Default [TextStyle] of day
+  /// Default style
   TextStyle _defaultTextStyle;
 
   @override
@@ -68,18 +74,18 @@ class __DateItemState extends State<_DateItem> {
       ? StreamBuilder(
           stream: widget.subject,
           builder: (_, data) {
-            /// Set default [Background] of day
+            /// Set default each [builder] is called 
             _defaultBackgroundColor = widget.backgroundColor;
 
-            /// Set default [TextStyle] of day
+            /// Set default style each [builder] is called 
             _defaultTextStyle = widget.dateStyle;
 
-            /// If today, set [Background] of today
-            if (_compareDate(widget.date, _today)) {
+            /// Check and set [Background] of today
+            if (compareDate(widget.date, widget.today)) {
               _defaultBackgroundColor = widget.todayBackgroundColor;
             } else if (data != null && !data.hasError && data.hasData) {
               final DateTime dateSelected = data.data;
-              if (_compareDate(widget.date, dateSelected)) {
+              if (compareDate(widget.date, dateSelected)) {
                 _defaultBackgroundColor = widget.pressedBackgroundColor;
                 _defaultTextStyle = widget.pressedDateStyle;
               }
@@ -87,7 +93,10 @@ class __DateItemState extends State<_DateItem> {
             return _body();
           },
         )
-      : Container();
+      : Container(
+          width: 50,
+          height: 50,
+        );
 
   /// Body layout
   Widget _body() => Container(
@@ -139,13 +148,13 @@ class __DateItemState extends State<_DateItem> {
                 : Container()),
       );
 
-  /// Handler pressed
+  /// Handler press event
   void _onPressed() {
     widget.subject.add(widget.date);
     widget.onDatePressed(widget.date);
   }
 
-  /// Handler long pressed
+  /// Handler long press event
   void _onLongPressed() {
     widget.subject.add(widget.date);
     widget.onDateLongPressed(widget.date);

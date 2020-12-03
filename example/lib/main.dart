@@ -6,7 +6,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
-        title: 'calendar',
+        title: 'CalendarWeek Example',
         home: HomePage(),
       );
 }
@@ -17,99 +17,72 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  DateTime _selectedDate = DateTime.now();
   final CalendarWeekController _controller = CalendarWeekController();
-  int i = 0;
 
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            i++;
-            final newDate = DateTime.now().add(Duration(days: i));
-            _controller.jumpToDate(newDate);
-            setState(() {
-              _selectedDate = newDate;
-            });
+            _controller.jumpToDate(DateTime.now());
+            setState(() {});
           },
+          child: Icon(Icons.today),
         ),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.blue,
-          title: Text('Calendar'),
+          title: Text('CalendarWeek'),
         ),
         body: Column(children: [
           Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 1)
-            ]),
-            child: CalendarWeek(
-              controller: _controller,
-              height: 100,
-              minDate: DateTime.now().add(
-                Duration(days: -365),
-              ),
-              maxDate: DateTime.now().add(
-                Duration(days: 365),
-              ),
-              onDatePressed: (DateTime datetime) {
-                setState(() {
-                  _selectedDate = datetime;
-                });
-              },
-              onDateLongPressed: (DateTime datetime) {
-                setState(() {
-                  _selectedDate = datetime;
-                });
-              },
-              onWeekChanged: () {},
-              weekendsStyle:
-                  TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
-              dayOfWeekStyle:
-                  TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-              dayOfWeekAlignment: FractionalOffset.bottomCenter,
-              dateStyle:
-                  TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
-              dateAlignment: FractionalOffset.topCenter,
-              todayDateStyle:
-                  TextStyle(color: Colors.orange, fontWeight: FontWeight.w400),
-              todayBackgroundColor: Colors.black.withOpacity(0.15),
-              pressedDateBackgroundColor: Colors.blue,
-              pressedDateStyle:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
-              dateBackgroundColor: Colors.transparent,
-              backgroundColor: Colors.white,
-              dayOfWeek: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
-              showMonth: true,
-              spaceBetweenLabelAndDate: 0,
-              dayShapeBorder: CircleBorder(),
-              decorations: [
-                DecorationItem(
-                    decorationAlignment: FractionalOffset.bottomRight,
-                    date: DateTime.now(),
-                    decoration: Icon(
-                      Icons.today,
-                      color: Colors.blue,
-                    )),
-                DecorationItem(
-                    date: DateTime.now().add(Duration(days: 3)),
-                    decoration: Text(
-                      'Holiday',
-                      style: TextStyle(
-                        color: Colors.brown,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
-              ],
-            ),
-          ),
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    spreadRadius: 1)
+              ]),
+              child: CalendarWeek(
+                controller: _controller,
+                height: 100,
+                showMonth: true,
+                minDate: DateTime.now().add(
+                  Duration(days: -365),
+                ),
+                maxDate: DateTime.now().add(
+                  Duration(days: 365),
+                ),
+                onDatePressed: (DateTime datetime) {
+                  // Do something
+                },
+                onDateLongPressed: (DateTime datetime) {
+                  // Do something
+                },
+                onWeekChanged: () {
+                  // Do something
+                },
+                decorations: [
+                  DecorationItem(
+                      decorationAlignment: FractionalOffset.bottomRight,
+                      date: DateTime.now(),
+                      decoration: Icon(
+                        Icons.today,
+                        color: Colors.blue,
+                      )),
+                  DecorationItem(
+                      date: DateTime.now().add(Duration(days: 3)),
+                      decoration: Text(
+                        'Holiday',
+                        style: TextStyle(
+                          color: Colors.brown,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                ],
+              )),
           Expanded(
             child: Center(
               child: Text(
-                '${_selectedDate.year}/${_selectedDate.month}/${_selectedDate.day}',
+                '${_controller.selectedDate.day}/${_controller.selectedDate.month}/${_controller.selectedDate.year}',
                 style: TextStyle(fontSize: 30),
               ),
             ),

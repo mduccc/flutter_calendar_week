@@ -1,118 +1,41 @@
 ### flutter_calendar_week
-A calendar view by week
-
-#### TODO:
-- [x] Jump to date
+A calendar widget by week
 
 ##### IOS | Android:
-<img src="https://i.imgur.com/Cg3AWtS.png" width="40%" height="40%"/> <img src="https://i.imgur.com/1WXg1o6.gif" width="43.3%" height="42.45%"/>
+<img src="https://i.imgur.com/Qv78xwO.png" width="40%" height="40%"/> <img src="https://i.imgur.com/oUQYCbC.png" width="43.29%" height="42.45%"/>
 
 <br>
-
-##### Web:
-
-<img src="https://i.imgur.com/FGjnZEv.png"/>
-
 
 #### Use:
 ```
 dependencies:
   flutter_calendar_week:
     git:
-      url: https://github.com/mduccc/flutter_calendar_week
-      ref: 0.4.1
+      url: https://github.com/mduccc/flutter_calendar_week.git
+      ref: 1.0.0
 ```
 
 ```Dart
-import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/flutter_calendar_week.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'calendar',
-        home: HomePage(),
-      );
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  DateTime _selectedDate = DateTime.now();
-  final CalendarWeekController _controller = CalendarWeekController();
-
-  int i = 0;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            i++;
-            final newDate = DateTime.now().add(Duration(days: i));
-            _controller.jumpToDate(newDate);
-            setState(() {
-              _selectedDate = newDate;
-            });
-          },
-        ),
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.blue,
-          title: Text('Calendar'),
-        ),
-        body: Column(children: [
-          Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 1)
-            ]),
-            child: CalendarWeek(
+CalendarWeek(
               controller: _controller,
               height: 100,
+              showMonth: true,
               minDate: DateTime.now().add(
                 Duration(days: -365),
               ),
               maxDate: DateTime.now().add(
                 Duration(days: 365),
               ),
+              
               onDatePressed: (DateTime datetime) {
-                setState(() {
-                  _selectedDate = datetime;
-                });
+                // Do something
               },
               onDateLongPressed: (DateTime datetime) {
-                setState(() {
-                  _selectedDate = datetime;
-                });
+               // Do something
               },
-              onWeekChanged: () {},
-              weekendsStyle:
-                  TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
-              dayOfWeekStyle:
-                  TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-              dayOfWeekAlignment: FractionalOffset.bottomCenter,
-              dateStyle:
-                  TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
-              dateAlignment: FractionalOffset.topCenter,
-              todayDateStyle:
-                  TextStyle(color: Colors.orange, fontWeight: FontWeight.w400),
-              todayBackgroundColor: Colors.black.withOpacity(0.15),
-              pressedDateBackgroundColor: Colors.blue,
-              pressedDateStyle:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
-              dateBackgroundColor: Colors.transparent,
-              backgroundColor: Colors.white,
-              dayOfWeek: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
-              showMonth: true,
-              spaceBetweenLabelAndDate: 0,
-              dayShapeBorder: CircleBorder(),
+              onWeekChanged: () {
+                // Do something
+              },
               decorations: [
                 DecorationItem(
                     decorationAlignment: FractionalOffset.bottomRight,
@@ -131,17 +54,5 @@ class _HomePageState extends State<HomePage> {
                       ),
                     )),
               ],
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: Text(
-                '${_selectedDate.year}/${_selectedDate.month}/${_selectedDate.day}',
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
-          )
-        ]),
-      );
-}
+            )
 ```
