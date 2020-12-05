@@ -1,8 +1,10 @@
 ### flutter_calendar_week
 A calendar widget by week
 
+[Dartdoc](http://indieteam.herokuapp.com/flutter-calendar-week/)
+
+
 ##### TODO:
-- [ ] Add dartdoc
 - [ ] Publish to pub.dev
 
 ##### IOS | Android:
