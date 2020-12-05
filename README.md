@@ -22,6 +22,10 @@ dependencies:
 ```
 
 ```Dart
+import 'package:flutter_calendar_week/flutter_calendar_week.dart';
+```
+
+```Dart
 CalendarWeek(
               controller: _controller,
               height: 100,
