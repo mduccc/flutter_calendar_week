@@ -1,4 +1,4 @@
-### flutter_calendar_week
+### Flutter calendar week
 A calendar widget by week
 
 [Dartdoc](http://indieteam.herokuapp.com/flutter-calendar-week/)
