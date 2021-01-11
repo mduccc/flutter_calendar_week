@@ -10,6 +10,50 @@ import 'package:flutter_calendar_week/src/strings.dart';
 import 'package:rxdart/subjects.dart';
 
 class CalendarWeekController {
+
+/*
+Example:
+  CalendarWeek(
+                controller: _controller,
+                height: 100,
+                showMonth: true,
+                minDate: DateTime.now().add(
+                  Duration(days: -365),
+                ),
+                maxDate: DateTime.now().add(
+                  Duration(days: 365),
+                ),
+                
+                onDatePressed: (DateTime datetime) {
+                  // Do something
+                },
+                onDateLongPressed: (DateTime datetime) {
+                // Do something
+                },
+                onWeekChanged: () {
+                  // Do something
+                },
+                decorations: [
+                  DecorationItem(
+                      decorationAlignment: FractionalOffset.bottomRight,
+                      date: DateTime.now(),
+                      decoration: Icon(
+                        Icons.today,
+                        color: Colors.blue,
+                      )),
+                  DecorationItem(
+                      date: DateTime.now().add(Duration(days: 3)),
+                      decoration: Text(
+                        'Holiday',
+                        style: TextStyle(
+                          color: Colors.brown,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                ],
+              )
+*/
+
   /// Today date time
   DateTime _today = DateTime.now();
 

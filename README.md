@@ -18,7 +18,7 @@ dependencies:
   flutter_calendar_week:
     git:
       url: https://github.com/mduccc/flutter_calendar_week.git
-      ref: 1.0.0
+      ref: 1.0.0+1
 ```
 
 ```Dart

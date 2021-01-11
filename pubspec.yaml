@@ -1,6 +1,6 @@
 name: flutter_calendar_week
 description: A new Flutter package.
-version: 1.0.0
+version: 1.0.0+1
 author:
 homepage:
 
@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dartz: ^0.9.1
-  rxdart: ^0.24.1
+  dartz: ^0.9.2
+  rxdart: ^0.25.0
 
 dev_dependencies:
   flutter_test:
