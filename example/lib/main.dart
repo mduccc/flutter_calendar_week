@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onDatePressed: (DateTime datetime) {
                   // Do something
+                  setState(() {});
                 },
                 onDateLongPressed: (DateTime datetime) {
                   // Do something
