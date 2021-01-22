@@ -14,7 +14,7 @@ class CalendarWeekController {
 /*
 Example:
   CalendarWeek(
-                controller: _controller,
+                controller: CalendarWeekController(),
                 height: 100,
                 showMonth: true,
                 minDate: DateTime.now().add(
