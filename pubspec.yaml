@@ -1,8 +1,10 @@
 name: flutter_calendar_week
-description: A new Flutter package.
-version: 1.0.0+1
-author:
-homepage:
+description: Flutter calendar week UI package
+version: 1.0.3+1
+authors: 
+  - mduccc
+  - mducc1412@gmail.com
+homepage: https://github.com/mduccc
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
