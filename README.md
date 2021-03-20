@@ -12,15 +12,6 @@ A calendar widget by week
 
 <br>
 
-#### Use:
-```
-dependencies:
-  flutter_calendar_week:
-    git:
-      url: https://github.com/mduccc/flutter_calendar_week.git
-      ref: 1.0.0+1
-```
-
 ```Dart
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 ```
