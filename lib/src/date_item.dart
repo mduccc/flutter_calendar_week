@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
 class DateItem extends StatefulWidget {
@@ -39,13 +40,17 @@ class DateItem extends StatefulWidget {
   /// Decoration widget
   final Widget decoration;
 
-  /// [BehaviorSubject] for emit, listen last date pressed
-  final BehaviorSubject<DateTime> subject;
+  /// [streamController] for emit date press event
+  final StreamController<DateTime> streamController;
+
+  /// [stream] for listen date change event
+  final Stream<DateTime> stream;
 
   DateItem({
     @required this.today,
     @required this.date,
-    @required this.subject,
+    @required this.streamController,
+    @required this.stream,
     this.dateStyle,
     this.pressedDateStyle,
     this.backgroundColor = Colors.transparent,
@@ -72,12 +77,12 @@ class __DateItemState extends State<DateItem> {
   @override
   Widget build(BuildContext context) => widget.date != null
       ? StreamBuilder(
-          stream: widget.subject,
+          stream: widget.stream,
           builder: (_, data) {
-            /// Set default each [builder] is called 
+            /// Set default each [builder] is called
             _defaultBackgroundColor = widget.backgroundColor;
 
-            /// Set default style each [builder] is called 
+            /// Set default style each [builder] is called
             _defaultTextStyle = widget.dateStyle;
 
             /// Check and set [Background] of today
@@ -150,13 +155,13 @@ class __DateItemState extends State<DateItem> {
 
   /// Handler press event
   void _onPressed() {
-    widget.subject.add(widget.date);
+    widget.streamController.add(widget.date);
     widget.onDatePressed(widget.date);
   }
 
   /// Handler long press event
   void _onLongPressed() {
-    widget.subject.add(widget.date);
+    widget.streamController.add(widget.date);
     widget.onDateLongPressed(widget.date);
   }
 }

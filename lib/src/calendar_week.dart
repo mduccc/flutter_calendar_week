@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/src/models/decoration_item.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
@@ -7,10 +9,8 @@ import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
 import 'package:flutter_calendar_week/src/strings.dart';
-import 'package:rxdart/subjects.dart';
 
 class CalendarWeekController {
-
 /*
 Example:
   CalendarWeek(
@@ -285,8 +285,11 @@ class CalendarWeek extends StatefulWidget {
 }
 
 class _CalendarWeekState extends State<CalendarWeek> {
-  /// [BehaviorSubject] emit last date pressed
-  final BehaviorSubject<DateTime> _subject = BehaviorSubject<DateTime>();
+  /// [_streamController] for emit date press event
+  final StreamController<DateTime> _streamCtrl = StreamController<DateTime>();
+
+  /// [_stream] for listen date change event
+  Stream<DateTime> _stream;
 
   /// Page controller
   PageController _pageController;
@@ -297,13 +300,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
       widget.controller ?? _defaultCalendarController;
 
   void _jumToDateHandler(DateTime dateTime) {
-    _subject.add(dateTime);
+    _streamCtrl.add(dateTime);
     _pageController.animateToPage(widget.controller._currentWeekIndex,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   void _setUp() {
     assert(_calendarController.hasClient == false);
+    _stream ??= _streamCtrl.stream.asBroadcastStream();
     _calendarController
       .._weeks.clear()
       .._weeks.addAll(separateWeeks(
@@ -451,12 +455,13 @@ class _CalendarWeekState extends State<CalendarWeek> {
           }
           return null;
         }(),
-        subject: _subject,
+        streamController: _streamCtrl,
+        stream: null,
       );
 
   @override
   void dispose() {
     super.dispose();
-    if (!_subject.isClosed) _subject.close();
+    if (!_streamCtrl.isClosed) _streamCtrl.close();
   }
 }
