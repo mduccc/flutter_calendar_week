@@ -78,11 +78,11 @@ void main() {
               .isAfter(selectDateA),
           true);
 
-      // /// Test select is more than [maxDate], keep [selectedDate]
-      // final DateTime selectDateB = DateTime.now().add(Duration(days: 1000));
-      // controller.jumpToDate(selectDateB);
-      // diff = controller.selectedDate.difference(selectDateA).inDays;
-      // expect(diff, 0);
+      /// Test select is more than [maxDate], keep [selectedDate]
+      final DateTime selectDateB = DateTime.now().add(Duration(days: 1000));
+      controller.jumpToDate(selectDateB);
+      diff = controller.selectedDate.difference(selectDateA).inDays;
+      expect(diff, 0);
     });
   });
 }
