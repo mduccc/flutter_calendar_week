@@ -461,6 +461,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
   @override
   void dispose() {
     super.dispose();
-    _cacheStream.dispose();
+    _cacheStream.close();
   }
 }

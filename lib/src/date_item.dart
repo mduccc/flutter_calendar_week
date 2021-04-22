@@ -75,8 +75,6 @@ class __DateItemState extends State<DateItem> {
       ? CacheStreamBuilder<DateTime>(
           cacheStream: widget.cacheStream,
           cacheBuilder: (_, data) {
-            print('fff ${data}');
-
             /// Set default each [builder] is called
             _defaultBackgroundColor = widget.backgroundColor;
 
