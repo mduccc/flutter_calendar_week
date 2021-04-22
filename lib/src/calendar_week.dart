@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/src/models/decoration_item.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
@@ -7,10 +9,9 @@ import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
 import 'package:flutter_calendar_week/src/strings.dart';
-import 'package:rxdart/subjects.dart';
+import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 
 class CalendarWeekController {
-
 /*
 Example:
   CalendarWeek(
@@ -285,8 +286,11 @@ class CalendarWeek extends StatefulWidget {
 }
 
 class _CalendarWeekState extends State<CalendarWeek> {
-  /// [BehaviorSubject] emit last date pressed
-  final BehaviorSubject<DateTime> _subject = BehaviorSubject<DateTime>();
+  /// [_streamController] for emit date press event
+  final CacheStream<DateTime> _cacheStream = CacheStream<DateTime>();
+
+  /// [_stream] for listen date change event
+  Stream<DateTime> _stream;
 
   /// Page controller
   PageController _pageController;
@@ -297,13 +301,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
       widget.controller ?? _defaultCalendarController;
 
   void _jumToDateHandler(DateTime dateTime) {
-    _subject.add(dateTime);
+    _cacheStream.add(dateTime);
     _pageController.animateToPage(widget.controller._currentWeekIndex,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   void _setUp() {
     assert(_calendarController.hasClient == false);
+    _stream ??= _cacheStream.stream.asBroadcastStream();
     _calendarController
       .._weeks.clear()
       .._weeks.addAll(separateWeeks(
@@ -409,54 +414,53 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   /// Date item layout
   Widget _dateItem(DateTime date) => DateItem(
-        today: _calendarController._today,
-        date: date,
-        dateStyle: compareDate(date, _calendarController._today)
-            ? widget.todayDateStyle
-            : date != null && (date.weekday == 6 || date.weekday == 7)
-                ? widget.weekendsStyle
-                : widget.dateStyle,
-        pressedDateStyle: widget.datePressedStyle,
-        backgroundColor: widget.dateBackgroundColor,
-        todayBackgroundColor: widget.todayBackgroundColor,
-        pressedBackgroundColor: widget.datePressedBackgroundColor,
-        decorationAlignment: () {
-          /// If date is contain in decorations list, use decorations Alignment
-          if (widget.decorations.isNotEmpty) {
-            final List<DecorationItem> matchDate = widget.decorations
-                .where((ele) => compareDate(ele.date, date))
-                .toList();
-            return matchDate.isNotEmpty
-                ? matchDate[0].decorationAlignment
-                : FractionalOffset.center;
-          }
-          return FractionalOffset.center;
-        }(),
-        dayShapeBorder: widget.dayShapeBorder,
-        onDatePressed: (datePressed) {
-          _calendarController._selectedDate = datePressed;
-          widget.onDatePressed(datePressed);
-        },
-        onDateLongPressed: (datePressed) {
-          _calendarController._selectedDate = datePressed;
-          widget.onDateLongPressed(datePressed);
-        },
-        decoration: () {
-          /// If date is contain in decorations list, use decorations Widget
-          if (widget.decorations.isNotEmpty) {
-            final List<DecorationItem> matchDate = widget.decorations
-                .where((ele) => compareDate(ele.date, date))
-                .toList();
-            return matchDate.isNotEmpty ? matchDate[0].decoration : null;
-          }
-          return null;
-        }(),
-        subject: _subject,
-      );
+      today: _calendarController._today,
+      date: date,
+      dateStyle: compareDate(date, _calendarController._today)
+          ? widget.todayDateStyle
+          : date != null && (date.weekday == 6 || date.weekday == 7)
+              ? widget.weekendsStyle
+              : widget.dateStyle,
+      pressedDateStyle: widget.datePressedStyle,
+      backgroundColor: widget.dateBackgroundColor,
+      todayBackgroundColor: widget.todayBackgroundColor,
+      pressedBackgroundColor: widget.datePressedBackgroundColor,
+      decorationAlignment: () {
+        /// If date is contain in decorations list, use decorations Alignment
+        if (widget.decorations.isNotEmpty) {
+          final List<DecorationItem> matchDate = widget.decorations
+              .where((ele) => compareDate(ele.date, date))
+              .toList();
+          return matchDate.isNotEmpty
+              ? matchDate[0].decorationAlignment
+              : FractionalOffset.center;
+        }
+        return FractionalOffset.center;
+      }(),
+      dayShapeBorder: widget.dayShapeBorder,
+      onDatePressed: (datePressed) {
+        _calendarController._selectedDate = datePressed;
+        widget.onDatePressed(datePressed);
+      },
+      onDateLongPressed: (datePressed) {
+        _calendarController._selectedDate = datePressed;
+        widget.onDateLongPressed(datePressed);
+      },
+      decoration: () {
+        /// If date is contain in decorations list, use decorations Widget
+        if (widget.decorations.isNotEmpty) {
+          final List<DecorationItem> matchDate = widget.decorations
+              .where((ele) => compareDate(ele.date, date))
+              .toList();
+          return matchDate.isNotEmpty ? matchDate[0].decoration : null;
+        }
+        return null;
+      }(),
+      cacheStream: _cacheStream);
 
   @override
   void dispose() {
     super.dispose();
-    if (!_subject.isClosed) _subject.close();
+    _cacheStream.close();
   }
 }

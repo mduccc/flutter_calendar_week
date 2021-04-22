@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter_calendar_week/src/cache_stream_widget.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
+import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 
 class DateItem extends StatefulWidget {
   /// Today
@@ -39,13 +40,13 @@ class DateItem extends StatefulWidget {
   /// Decoration widget
   final Widget decoration;
 
-  /// [BehaviorSubject] for emit, listen last date pressed
-  final BehaviorSubject<DateTime> subject;
+  /// [cacheStream] for emit date press event
+  final CacheStream<DateTime> cacheStream;
 
   DateItem({
     @required this.today,
     @required this.date,
-    @required this.subject,
+    @required this.cacheStream,
     this.dateStyle,
     this.pressedDateStyle,
     this.backgroundColor = Colors.transparent,
@@ -71,13 +72,13 @@ class __DateItemState extends State<DateItem> {
 
   @override
   Widget build(BuildContext context) => widget.date != null
-      ? StreamBuilder(
-          stream: widget.subject,
-          builder: (_, data) {
-            /// Set default each [builder] is called 
+      ? CacheStreamBuilder<DateTime>(
+          cacheStream: widget.cacheStream,
+          cacheBuilder: (_, data) {
+            /// Set default each [builder] is called
             _defaultBackgroundColor = widget.backgroundColor;
 
-            /// Set default style each [builder] is called 
+            /// Set default style each [builder] is called
             _defaultTextStyle = widget.dateStyle;
 
             /// Check and set [Background] of today
@@ -150,13 +151,13 @@ class __DateItemState extends State<DateItem> {
 
   /// Handler press event
   void _onPressed() {
-    widget.subject.add(widget.date);
+    widget.cacheStream.add(widget.date);
     widget.onDatePressed(widget.date);
   }
 
   /// Handler long press event
   void _onLongPressed() {
-    widget.subject.add(widget.date);
+    widget.cacheStream.add(widget.date);
     widget.onDateLongPressed(widget.date);
   }
 }

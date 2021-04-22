@@ -1,19 +1,17 @@
 name: flutter_calendar_week
 description: Flutter calendar week UI package
-version: 1.0.3+2
+version: 1.1.0
 authors: 
   - mduccc
   - mducc1412@gmail.com
 homepage: https://github.com/mduccc
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  dartz: ^0.9.2
-  rxdart: ^0.25.0
 
 dev_dependencies:
   flutter_test:
