@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/src/utils/cache_stream_widget.dart';
+import 'package:flutter_calendar_week/src/cache_stream_widget.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 
