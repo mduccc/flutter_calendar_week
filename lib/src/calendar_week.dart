@@ -65,18 +65,18 @@ Example:
   bool get hasClient => _hasClient;
 
   /// Store a selected date
-  DateTime _selectedDate;
+  DateTime? _selectedDate;
 
   /// Get [_selectedDate] selected;
   DateTime get selectedDate => _selectedDate ?? _today;
 
   /// get [_weeks]
-  List<DateTime> get rangeWeekDate => _weeks.isNotEmpty
+  List<DateTime?> get rangeWeekDate => _weeks.isNotEmpty
       ? _weeks[_currentWeekIndex].days.where((ele) => ele != null).toList()
       : [];
 
   /// [Callback] for update widget event
-  Function(DateTime) _widgetJumpToDate;
+  late Function(DateTime?) _widgetJumpToDate;
 
   /// Index of week display on the screen
   int _currentWeekIndex = 0;
@@ -176,13 +176,13 @@ class CalendarWeek extends StatefulWidget {
   final double height;
 
   /// Page controller
-  final CalendarWeekController controller;
+  final CalendarWeekController? controller;
 
   /// [Callback] changed week event
   final Function() onWeekChanged;
 
   CalendarWeek._(
-      Key key,
+      Key? key,
       this.maxDate,
       this.minDate,
       this.height,
@@ -209,19 +209,15 @@ class CalendarWeek extends StatefulWidget {
       this.decorations,
       this.controller,
       this.onWeekChanged)
-      : assert(minDate != null),
-        assert(maxDate != null),
-        assert(daysOfWeek != null),
-        assert(months != null),
-        assert(daysOfWeek.length == 7),
+      : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
         super(key: key);
 
   factory CalendarWeek(
-          {Key key,
-          DateTime maxDate,
-          DateTime minDate,
+          {Key? key,
+          DateTime? maxDate,
+          DateTime? minDate,
           double height = 100,
           TextStyle monthStyle =
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
@@ -237,8 +233,8 @@ class CalendarWeek extends StatefulWidget {
           TextStyle pressedDateStyle =
               const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
           Color dateBackgroundColor = Colors.transparent,
-          Function(DateTime) onDatePressed,
-          Function(DateTime) onDateLongPressed,
+          Function(DateTime)? onDatePressed,
+          Function(DateTime)? onDateLongPressed,
           Color backgroundColor = Colors.white,
           List<String> dayOfWeek = dayOfWeekDefault,
           List<String> month = monthDefaults,
@@ -250,8 +246,8 @@ class CalendarWeek extends StatefulWidget {
           EdgeInsets marginDayOfWeek = const EdgeInsets.symmetric(vertical: 4),
           CircleBorder dayShapeBorder = const CircleBorder(),
           List<DecorationItem> decorations = const [],
-          CalendarWeekController controller,
-          Function() onWeekChanged}) =>
+          CalendarWeekController? controller,
+          Function()? onWeekChanged}) =>
       CalendarWeek._(
           key,
           maxDate ?? DateTime.now().add(Duration(days: 180)),
@@ -287,44 +283,43 @@ class CalendarWeek extends StatefulWidget {
 
 class _CalendarWeekState extends State<CalendarWeek> {
   /// [_streamController] for emit date press event
-  final CacheStream<DateTime> _cacheStream = CacheStream<DateTime>();
+  final CacheStream<DateTime?> _cacheStream = CacheStream<DateTime?>();
 
   /// [_stream] for listen date change event
-  Stream<DateTime> _stream;
+  Stream<DateTime?>? _stream;
 
   /// Page controller
-  PageController _pageController;
+  late PageController _pageController;
 
   CalendarWeekController _defaultCalendarController = CalendarWeekController();
 
-  CalendarWeekController get _calendarController =>
+  CalendarWeekController get controller =>
       widget.controller ?? _defaultCalendarController;
 
-  void _jumToDateHandler(DateTime dateTime) {
+  void _jumToDateHandler(DateTime? dateTime) {
     _cacheStream.add(dateTime);
-    _pageController.animateToPage(widget.controller._currentWeekIndex,
+    _pageController.animateToPage(widget.controller!._currentWeekIndex,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   void _setUp() {
-    assert(_calendarController.hasClient == false);
-    _stream ??= _cacheStream.stream.asBroadcastStream();
-    _calendarController
+    assert(controller.hasClient == false);
+    _stream ??= _cacheStream.stream!.asBroadcastStream();
+    controller
       .._weeks.clear()
       .._weeks.addAll(separateWeeks(
           widget.minDate, widget.maxDate, widget.daysOfWeek, widget.months))
 
       /// [_currentWeekIndex] is index of week in [List] weeks contain today
 
-      .._currentWeekIndex = findCurrentWeekIndexByDate(
-          _calendarController._today, _calendarController._weeks)
+      .._currentWeekIndex =
+          findCurrentWeekIndexByDate(controller._today, controller._weeks)
       .._widgetJumpToDate = _jumToDateHandler
       .._hasClient = true;
 
     /// Init Page controller
     /// Set [initialPage] is page contain today
-    _pageController =
-        PageController(initialPage: _calendarController._currentWeekIndex);
+    _pageController = PageController(initialPage: controller._currentWeekIndex);
   }
 
   @override
@@ -343,12 +338,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
       height: widget.height,
       child: PageView.builder(
         controller: _pageController,
-        itemCount: _calendarController._weeks.length,
+        itemCount: controller._weeks.length,
         onPageChanged: (currentPage) {
-          widget.controller._currentWeekIndex = currentPage;
+          widget.controller!._currentWeekIndex = currentPage;
           widget.onWeekChanged();
         },
-        itemBuilder: (_, i) => _week(widget.controller._weeks[i]),
+        itemBuilder: (_, i) => _week(controller._weeks[i]),
       ));
 
   /// Layout of week
@@ -408,15 +403,15 @@ class _CalendarWeekState extends State<CalendarWeek> {
       ));
 
   /// Date layout
-  Widget _dates(List<DateTime> dates) => Row(
+  Widget _dates(List<DateTime?> dates) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: dates.map(_dateItem).toList());
 
   /// Date item layout
-  Widget _dateItem(DateTime date) => DateItem(
-      today: _calendarController._today,
+  Widget _dateItem(DateTime? date) => DateItem(
+      today: controller._today,
       date: date,
-      dateStyle: compareDate(date, _calendarController._today)
+      dateStyle: compareDate(date, controller._today)
           ? widget.todayDateStyle
           : date != null && (date.weekday == 6 || date.weekday == 7)
               ? widget.weekendsStyle
@@ -439,11 +434,11 @@ class _CalendarWeekState extends State<CalendarWeek> {
       }(),
       dayShapeBorder: widget.dayShapeBorder,
       onDatePressed: (datePressed) {
-        _calendarController._selectedDate = datePressed;
+        controller._selectedDate = datePressed;
         widget.onDatePressed(datePressed);
       },
       onDateLongPressed: (datePressed) {
-        _calendarController._selectedDate = datePressed;
+        controller._selectedDate = datePressed;
         widget.onDateLongPressed(datePressed);
       },
       decoration: () {

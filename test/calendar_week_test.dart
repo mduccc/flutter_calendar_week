@@ -15,7 +15,7 @@ import 'package:flutter_calendar_week/src/strings.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
 
 void main() {
-  CalendarWeekController controller;
+  CalendarWeekController? controller;
 
   setUp(() {
     controller = CalendarWeekController();
@@ -39,7 +39,7 @@ void main() {
           if (j + i < separated[i].days.length &&
               separated[i].days[j + 1] != null) {
             expect(
-                separated[i].days[j].isBefore(separated[i].days[j + 1]), true);
+                separated[i].days[j]!.isBefore(separated[i].days[j + 1]!), true);
           }
         }
       }
@@ -69,19 +69,19 @@ void main() {
       /// Test select date is less than [maxDate],
       /// update [selectedDate] and [rangeWeekDate]
       final DateTime selectDateA = DateTime.now().add(Duration(days: 8));
-      controller.jumpToDate(selectDateA);
-      int diff = controller.selectedDate.difference(selectDateA).inDays;
+      controller!.jumpToDate(selectDateA);
+      int diff = controller!.selectedDate.difference(selectDateA).inDays;
       expect(diff, 0);
-      expect(controller.rangeWeekDate[0].isBefore(selectDateA), true);
+      expect(controller!.rangeWeekDate[0]!.isBefore(selectDateA), true);
       expect(
-          controller.rangeWeekDate[controller.rangeWeekDate.length - 1]
+          controller!.rangeWeekDate[controller!.rangeWeekDate.length - 1]!
               .isAfter(selectDateA),
           true);
 
       /// Test select is more than [maxDate], keep [selectedDate]
       final DateTime selectDateB = DateTime.now().add(Duration(days: 1000));
-      controller.jumpToDate(selectDateB);
-      diff = controller.selectedDate.difference(selectDateA).inDays;
+      controller!.jumpToDate(selectDateB);
+      diff = controller!.selectedDate.difference(selectDateA).inDays;
       expect(diff, 0);
     });
   });
