@@ -3,7 +3,7 @@ import 'dart:async';
 /// [BaseCacheStream] cache last value of Stream
 abstract class BaseCacheStream<T> {
   /// Expose a [stream] for external
-  Stream<T> get stream;
+  Stream<T>? get stream;
 
   /// Add event to [BaseCacheStream]
   void add(T args);
@@ -16,16 +16,16 @@ abstract class BaseCacheStream<T> {
 }
 
 /// [CacheStream] implement [BaseCacheStream]
-class CacheStream<T> implements BaseCacheStream<T> {
+class CacheStream<T> implements BaseCacheStream<T?> {
   /// [_streamController] for add and listen event
-  StreamController<T> _streamController = StreamController();
-  Stream<T> _stream;
-  T _lastValue;
+  StreamController<T?> _streamController = StreamController();
+  Stream<T?>? _stream;
+  T? _lastValue;
 
   /// init [_stream] and listen for update [_lastValue]
   CacheStream() {
     _stream ??= _streamController.stream.asBroadcastStream();
-    _stream.listen((value) {
+    _stream!.listen((value) {
       if (value != null) {
         _lastValue = value;
       }
@@ -33,15 +33,15 @@ class CacheStream<T> implements BaseCacheStream<T> {
   }
 
   @override
-  Stream<T> get stream => _stream;
+  Stream<T?>? get stream => _stream;
 
   @override
-  void add(T event) {
+  void add(T? event) {
     _streamController.add(event);
   }
 
   @override
-  T get lastValue => _lastValue;
+  T? get lastValue => _lastValue;
 
   @override
   void close() {

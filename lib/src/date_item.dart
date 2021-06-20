@@ -8,45 +8,45 @@ class DateItem extends StatefulWidget {
   final DateTime today;
 
   /// Date of item
-  final DateTime date;
+  final DateTime? date;
 
   /// Style of [date]
-  final TextStyle dateStyle;
+  final TextStyle? dateStyle;
 
   /// Style of day after pressed
-  final TextStyle pressedDateStyle;
+  final TextStyle? pressedDateStyle;
 
   /// Background
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// Specify a background if [date] is [today]
-  final Color todayBackgroundColor;
+  final Color? todayBackgroundColor;
 
   /// Specify a background after pressed
-  final Color pressedBackgroundColor;
+  final Color? pressedBackgroundColor;
 
   /// Alignment a decoration
-  final Alignment decorationAlignment;
+  final Alignment? decorationAlignment;
 
   /// Specify a shape
-  final ShapeBorder dayShapeBorder;
+  final ShapeBorder? dayShapeBorder;
 
   /// [Callback] function for press event
-  final void Function(DateTime) onDatePressed;
+  final void Function(DateTime)? onDatePressed;
 
   /// [Callback] function for long press event
-  final void Function(DateTime) onDateLongPressed;
+  final void Function(DateTime)? onDateLongPressed;
 
   /// Decoration widget
-  final Widget decoration;
+  final Widget? decoration;
 
   /// [cacheStream] for emit date press event
-  final CacheStream<DateTime> cacheStream;
+  final CacheStream<DateTime?> cacheStream;
 
   DateItem({
-    @required this.today,
-    @required this.date,
-    @required this.cacheStream,
+    required this.today,
+    required this.date,
+    required this.cacheStream,
     this.dateStyle,
     this.pressedDateStyle,
     this.backgroundColor = Colors.transparent,
@@ -65,14 +65,14 @@ class DateItem extends StatefulWidget {
 
 class __DateItemState extends State<DateItem> {
   /// Default background
-  Color _defaultBackgroundColor;
+  Color? _defaultBackgroundColor;
 
   /// Default style
-  TextStyle _defaultTextStyle;
+  TextStyle? _defaultTextStyle;
 
   @override
   Widget build(BuildContext context) => widget.date != null
-      ? CacheStreamBuilder<DateTime>(
+      ? CacheStreamBuilder<DateTime?>(
           cacheStream: widget.cacheStream,
           cacheBuilder: (_, data) {
             /// Set default each [builder] is called
@@ -84,8 +84,8 @@ class __DateItemState extends State<DateItem> {
             /// Check and set [Background] of today
             if (compareDate(widget.date, widget.today)) {
               _defaultBackgroundColor = widget.todayBackgroundColor;
-            } else if (data != null && !data.hasError && data.hasData) {
-              final DateTime dateSelected = data.data;
+            } else if (!data.hasError && data.hasData) {
+              final DateTime? dateSelected = data.data;
               if (compareDate(widget.date, dateSelected)) {
                 _defaultBackgroundColor = widget.pressedBackgroundColor;
                 _defaultTextStyle = widget.pressedDateStyle;
@@ -109,8 +109,8 @@ class __DateItemState extends State<DateItem> {
           child: FlatButton(
               padding: EdgeInsets.all(5),
               onPressed: _onPressed,
-              color: _defaultBackgroundColor,
-              shape: widget.dayShapeBorder,
+              color: _defaultBackgroundColor!,
+              shape: widget.dayShapeBorder!,
               child: Stack(
                 children: <Widget>[
                   Positioned(
@@ -121,8 +121,8 @@ class __DateItemState extends State<DateItem> {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        '${widget.date.day}',
-                        style: _defaultTextStyle,
+                        '${widget.date!.day}',
+                        style: _defaultTextStyle!,
                       ),
                     ),
                   ),
@@ -144,20 +144,24 @@ class __DateItemState extends State<DateItem> {
             child: widget.decoration != null
                 ? FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: widget.decoration,
+                    child: widget.decoration!,
                   )
                 : Container()),
       );
 
   /// Handler press event
   void _onPressed() {
-    widget.cacheStream.add(widget.date);
-    widget.onDatePressed(widget.date);
+    if (widget.date != null) {
+      widget.cacheStream.add(widget.date);
+      widget.onDatePressed!(widget.date!);
+    }
   }
 
   /// Handler long press event
   void _onLongPressed() {
-    widget.cacheStream.add(widget.date);
-    widget.onDateLongPressed(widget.date);
+    if (widget.date != null) {
+      widget.cacheStream.add(widget.date);
+      widget.onDateLongPressed!(widget.date!);
+    }
   }
 }
