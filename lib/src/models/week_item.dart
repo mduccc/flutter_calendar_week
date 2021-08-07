@@ -1,7 +1,7 @@
 class WeekItem {
   final String month;
   final List<String> dayOfWeek;
-  final List<DateTime> days;
+  final List<DateTime?> days;
 
   WeekItem({
     this.month = '',
