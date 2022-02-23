@@ -34,6 +34,7 @@ Example:
                 onWeekChanged: () {
                   // Do something
                 },
+                monthViewBuilder: (date) => Text(date.toString()),
                 decorations: [
                   DecorationItem(
                       decorationAlignment: FractionalOffset.bottomRight,
