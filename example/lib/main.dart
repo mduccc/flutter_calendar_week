@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
+import 'package:intl/intl.dart';
 
 void main() => runApp(MyApp());
 
@@ -61,6 +62,18 @@ class _HomePageState extends State<HomePage> {
                 onWeekChanged: () {
                   // Do something
                 },
+                monthViewBuilder: (DateTime time) => Align(
+                  alignment: FractionalOffset.center,
+                  child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        DateFormat.yMMMM().format(time),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.w600),
+                      )),
+                ),
                 decorations: [
                   DecorationItem(
                       decorationAlignment: FractionalOffset.bottomRight,

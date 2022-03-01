@@ -34,6 +34,7 @@ Example:
                 onWeekChanged: () {
                   // Do something
                 },
+                monthViewBuilder: (date) => Text(date.toString()),
                 decorations: [
                   DecorationItem(
                       decorationAlignment: FractionalOffset.bottomRight,
@@ -110,7 +111,7 @@ class CalendarWeek extends StatefulWidget {
   final DateTime maxDate;
 
   /// Style of months
-  final TextStyle monthStyle;
+  final Widget Function(DateTime)? monthViewBuilder;
 
   /// Style of day of week
   final TextStyle dayOfWeekStyle;
@@ -186,7 +187,7 @@ class CalendarWeek extends StatefulWidget {
       this.maxDate,
       this.minDate,
       this.height,
-      this.monthStyle,
+      this.monthViewBuilder,
       this.dayOfWeekStyle,
       this.monthAlignment,
       this.dateStyle,
@@ -219,8 +220,7 @@ class CalendarWeek extends StatefulWidget {
           DateTime? maxDate,
           DateTime? minDate,
           double height = 100,
-          TextStyle monthStyle =
-              const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+          Widget Function(DateTime)? monthViewBuilder,
           TextStyle dayOfWeekStyle =
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
           FractionalOffset monthAlignment = FractionalOffset.center,
@@ -253,7 +253,7 @@ class CalendarWeek extends StatefulWidget {
           maxDate ?? DateTime.now().add(Duration(days: 180)),
           minDate ?? DateTime.now().add(Duration(days: -180)),
           height,
-          monthStyle,
+          monthViewBuilder,
           dayOfWeekStyle,
           monthAlignment,
           dateStyle,
@@ -351,7 +351,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           // Month
-          widget.monthDisplay ? _monthItem(weeks.month) : Container(),
+          (widget.monthDisplay &&
+                  widget.monthViewBuilder != null &&
+                  weeks.days.firstWhere((el) => el != null) != null)
+              ? widget
+                  .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
+              : _monthItem(weeks.month),
 
           /// Day of week layout
           _dayOfWeek(weeks.dayOfWeek),
@@ -368,7 +373,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
             margin: widget.marginMonth,
             child: Text(
               title,
-              style: widget.monthStyle,
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             )),
