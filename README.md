@@ -32,6 +32,18 @@ CalendarWeek(
               onWeekChanged: () {
                 // Do something
               },
+              monthViewBuilder: (DateTime time) => Align(
+                  alignment: FractionalOffset.center,
+                  child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        DateFormat.yMMMM().format(time),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.w600),
+                      )),
+                ),
               decorations: [
                 DecorationItem(
                     decorationAlignment: FractionalOffset.bottomRight,
