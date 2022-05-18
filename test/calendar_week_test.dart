@@ -7,12 +7,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_calendar_week/src/utils/compare_date.dart';
-import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
-import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
-import 'package:flutter_calendar_week/src/strings.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
+import 'package:flutter_calendar_week/src/strings.dart';
+import 'package:flutter_calendar_week/src/utils/compare_date.dart';
+import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
+import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   CalendarWeekController? controller;
