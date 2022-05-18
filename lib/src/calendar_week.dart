@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_week/src/custom_scroll_behaiver.dart';
+import 'package:flutter_calendar_week/src/date_item.dart';
 import 'package:flutter_calendar_week/src/models/decoration_item.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
-import 'package:flutter_calendar_week/src/date_item.dart';
-import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
-import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
-import 'package:flutter_calendar_week/src/utils/compare_date.dart';
-
 import 'package:flutter_calendar_week/src/strings.dart';
 import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
+import 'package:flutter_calendar_week/src/utils/compare_date.dart';
+import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
+import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
 
 class CalendarWeekController {
 /*
@@ -336,14 +335,17 @@ class _CalendarWeekState extends State<CalendarWeek> {
       color: widget.backgroundColor,
       width: double.infinity,
       height: widget.height,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: controller._weeks.length,
-        onPageChanged: (currentPage) {
-          widget.controller!._currentWeekIndex = currentPage;
-          widget.onWeekChanged();
-        },
-        itemBuilder: (_, i) => _week(controller._weeks[i]),
+      child: ScrollConfiguration(
+        behavior: CustomScrollBehavior(),
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: controller._weeks.length,
+          onPageChanged: (currentPage) {
+            widget.controller!._currentWeekIndex = currentPage;
+            widget.onWeekChanged();
+          },
+          itemBuilder: (_, i) => _week(controller._weeks[i]),
+        ),
       ));
 
   /// Layout of week

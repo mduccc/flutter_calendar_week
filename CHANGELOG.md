@@ -1,3 +1,5 @@
+## [2.1.1] - Support more scroll behavior
+
 ## [2.1.0] - Added custom view for month header 
 
 ## [2.0.0-nullsafety.1] - Support Null-Safety
