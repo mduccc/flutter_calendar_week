@@ -1,3 +1,7 @@
+## [3.0.0] 
+- Replace `FlatButton` by `Container`
+- Use `BoxShape` for `dayShapeBorder` instead `ShapeBorder`
+
 ## [2.1.1] - Support more scroll behavior
 
 ## [2.1.0] - Added custom view for month header 

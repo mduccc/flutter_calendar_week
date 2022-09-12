@@ -167,7 +167,7 @@ class CalendarWeek extends StatefulWidget {
   final EdgeInsets marginMonth;
 
   /// Shape of day
-  final ShapeBorder dayShapeBorder;
+  final BoxShape dayShapeBorder;
 
   /// List of decorations
   final List<DecorationItem> decorations;
@@ -243,7 +243,7 @@ class CalendarWeek extends StatefulWidget {
               const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
           EdgeInsets marginMonth = const EdgeInsets.symmetric(vertical: 4),
           EdgeInsets marginDayOfWeek = const EdgeInsets.symmetric(vertical: 4),
-          CircleBorder dayShapeBorder = const CircleBorder(),
+          BoxShape dayShapeBorder = BoxShape.circle,
           List<DecorationItem> decorations = const [],
           CalendarWeekController? controller,
           Function()? onWeekChanged}) =>
