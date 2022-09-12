@@ -29,7 +29,7 @@ class DateItem extends StatefulWidget {
   final Alignment? decorationAlignment;
 
   /// Specify a shape
-  final ShapeBorder? dayShapeBorder;
+  final BoxShape? dayShapeBorder;
 
   /// [Callback] function for press event
   final void Function(DateTime)? onDatePressed;
@@ -106,29 +106,33 @@ class __DateItemState extends State<DateItem> {
         alignment: FractionalOffset.center,
         child: GestureDetector(
           onLongPress: _onLongPressed,
-          child: FlatButton(
-              padding: EdgeInsets.all(5),
-              onPressed: _onPressed,
-              color: _defaultBackgroundColor!,
-              shape: widget.dayShapeBorder!,
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        '${widget.date!.day}',
-                        style: _defaultTextStyle!,
+          child: GestureDetector(
+            onTap: _onPressed,
+            child: Container(
+                decoration: BoxDecoration(
+                  color: _defaultBackgroundColor!,
+                  shape: widget.dayShapeBorder!,
+                ),
+                padding: EdgeInsets.all(5),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          '${widget.date!.day}',
+                          style: _defaultTextStyle!,
+                        ),
                       ),
                     ),
-                  ),
-                  _decoration()
-                ],
-              )),
+                    _decoration()
+                  ],
+                )),
+          ),
         ),
       );
 
