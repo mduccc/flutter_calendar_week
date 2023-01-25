@@ -6,6 +6,6 @@ class WeekItem {
   WeekItem({
     this.month = '',
     this.dayOfWeek = const [],
-    this.days = const []
+    this.days = const [],
   });
 }

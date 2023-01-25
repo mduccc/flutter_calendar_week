@@ -1,5 +1,6 @@
 import 'package:flutter_calendar_week/src/models/week_item.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
+
 /// [findCurrentWeekIndexByDate] return -1 when cannot match
 int findCurrentWeekIndexByDate(DateTime dateTime, List<WeekItem> weeks) {
   int index = -1;

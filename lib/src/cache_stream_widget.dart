@@ -7,21 +7,20 @@ class CacheStreamBuilder<T> extends StreamBuilder {
   final CacheStream<T> cacheStream;
   final AsyncWidgetBuilder? cacheBuilder;
 
-  CacheStreamBuilder(
-      {required this.cacheStream, this.cacheBuilder, this.initialData, Key? key})
-      : super(
+  CacheStreamBuilder({
+    required this.cacheStream,
+    this.cacheBuilder,
+    this.initialData,
+    Key? key,
+  }) : super(
             key: key,
             initialData: initialData,
             stream: cacheStream.stream!,
 
             /// Return [lastValue] of [cacheStream] if [snapshot] has no data or error
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if ((snapshot.hasError || !snapshot.hasData) &&
-                  cacheStream.lastValue != null) {
-                return cacheBuilder!(
-                    context,
-                    AsyncSnapshot.withData(
-                        ConnectionState.done, cacheStream.lastValue));
+              if ((snapshot.hasError || !snapshot.hasData) && cacheStream.lastValue != null) {
+                return cacheBuilder!(context, AsyncSnapshot.withData(ConnectionState.done, cacheStream.lastValue));
               } else {
                 return cacheBuilder!(context, snapshot);
               }
