@@ -1,7 +1,7 @@
 name: flutter_calendar_week
-description: Flutter calendar week UI package
-version: 3.0.0
-repository: https://github.com/mduccc/flutter_calendar_week
+description: Flutter calendar week UI package customized to show SUN to SAT
+version: 1.0.1
+repository: https://github.com/asifbtek/flutter_calendar_week
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
