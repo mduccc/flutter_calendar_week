@@ -94,46 +94,36 @@ class __DateItemState extends State<DateItem> {
             return _body();
           },
         )
-      : Container(
-          width: 50,
-          height: 50,
-        );
+      : SizedBox();
 
   /// Body layout
-  Widget _body() => Container(
-        width: 50,
-        height: 50,
-        alignment: FractionalOffset.center,
-        child: GestureDetector(
-          onLongPress: _onLongPressed,
-          child: GestureDetector(
-            onTap: _onPressed,
-            child: Container(
-                decoration: BoxDecoration(
-                  color: _defaultBackgroundColor!,
-                  shape: widget.dayShapeBorder!,
-                ),
-                padding: EdgeInsets.all(5),
-                child: Stack(
-                  children: <Widget>[
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '${widget.date!.day}',
-                          style: _defaultTextStyle!,
-                        ),
-                      ),
+  Widget _body() => GestureDetector(
+        onTap: _onPressed,
+        onLongPress: _onLongPressed,
+        child: Container(
+            decoration: BoxDecoration(
+              color: _defaultBackgroundColor!,
+              shape: widget.dayShapeBorder!,
+            ),
+            padding: EdgeInsets.all(5),
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '${widget.date!.day}',
+                      style: _defaultTextStyle!,
                     ),
-                    _decoration()
-                  ],
-                )),
-          ),
-        ),
+                  ),
+                ),
+                _decoration()
+              ],
+            )),
       );
 
   /// Decoration layout
