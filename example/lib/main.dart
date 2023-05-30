@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 import 'package:intl/intl.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+ 
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -43,7 +46,6 @@ class _HomePageState extends State<HomePage> {
           title: const Text('CalendarWeek'),
         ),
         body: SizedBox(
-         
           child: Column(children: [
             Container(
                 decoration: BoxDecoration(
@@ -54,7 +56,6 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.green,
                   ),
 
-                
                   dayWidth: 30,
                   pressedDateBackgroundColor: Colors.black,
                   todayBackgroundColor: Colors.yellow,
@@ -87,17 +88,7 @@ class _HomePageState extends State<HomePage> {
                   onWeekChanged: () {
                     // Do something
                   },
-                  monthViewBuilder: (DateTime time) => Align(
-                    alignment: FractionalOffset.center,
-                    child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          DateFormat.yMMMM().format(time),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-                        )),
-                  ),
+         
                   decorations: [
                     DecorationItem(
                         decorationAlignment: FractionalOffset.bottomRight,

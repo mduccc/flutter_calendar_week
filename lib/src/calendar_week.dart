@@ -9,6 +9,8 @@ import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
 import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 import 'item_container.dart';
 
@@ -104,6 +106,14 @@ Example:
 }
 
 class CalendarWeek extends StatefulWidget {
+  /// localization [String] tr - en etc
+  /// intl localization
+  final String localization;
+
+  /// day text name format [DateFormat] DateFormat.MMM
+  /// intl localization
+  final DateFormat Function(String locale)? dayFormatter;
+
   /// [BoxDecoration] of day of week [Container]
   final BoxDecoration? dayOfWeekDecoration;
 
@@ -175,10 +185,10 @@ class CalendarWeek extends StatefulWidget {
   final Color backgroundColor;
 
   /// List contain titles day of week
-  final List<String> daysOfWeek;
+  final List<String>? daysOfWeek;
 
   /// List contain title months
-  final List<String> months;
+  final List<String>? months;
 
   /// Condition show month
   final bool monthDisplay;
@@ -242,9 +252,9 @@ class CalendarWeek extends StatefulWidget {
     this.dayOfWeekHeight,
     this.dayOfWeekWidth,
     this.calenderDecoration,
-  )   : assert(daysOfWeek.length == 7),
-        assert(months.length == 12),
-        assert(minDate.isBefore(maxDate)),
+    this.localization,
+    this.dayFormatter,
+  )   : assert(minDate.isBefore(maxDate)),
         super(key: key);
 
   factory CalendarWeek({
@@ -264,8 +274,8 @@ class CalendarWeek extends StatefulWidget {
     Function(DateTime)? onDatePressed,
     Function(DateTime)? onDateLongPressed,
     Color backgroundColor = Colors.white,
-    List<String> dayOfWeek = dayOfWeekDefault,
-    List<String> month = monthDefaults,
+    List<String>? dayOfWeek,
+    List<String>? month,
     bool showMonth = true,
     List<int> weekendsIndexes = weekendsIndexesDefault,
     TextStyle weekendsStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
@@ -282,6 +292,8 @@ class CalendarWeek extends StatefulWidget {
     double? dayOfWeekHeight,
     double? dayOfWeekWidth,
     BoxDecoration? calendarDecoration,
+    String localization = "tr",
+    DateFormat Function(String locale)? dayFormatter,
   }) =>
       CalendarWeek._(
         key,
@@ -318,6 +330,8 @@ class CalendarWeek extends StatefulWidget {
         dayOfWeekHeight,
         dayOfWeekWidth,
         calendarDecoration,
+        localization,
+        dayFormatter,
       );
 
   @override
@@ -332,7 +346,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
   Stream<DateTime?>? _stream;
 
   /// Page controller
-  late PageController _pageController;
+  PageController? _pageController;
 
   CalendarWeekController _defaultCalendarController = CalendarWeekController();
 
@@ -340,16 +354,46 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   void _jumToDateHandler(DateTime? dateTime) {
     _cacheStream.add(dateTime);
-    _pageController.animateToPage(widget.controller!._currentWeekIndex,
+    _pageController?.animateToPage(widget.controller!._currentWeekIndex,
         duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
-  void _setUp() {
+  static List<String> getDaysOfWeek([String? locale]) {
+    final now = DateTime.now();
+    final firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    return List.generate(7, (index) => index)
+        .map((value) => DateFormat(DateFormat.WEEKDAY, locale).format(firstDayOfWeek.add(Duration(days: value))))
+        .toList();
+  }
+
+  void _setUp() async {
     //assert(controller.hasClient == false);
     _stream ??= _cacheStream.stream!.asBroadcastStream();
+
+    List<String> localizationMonths = [];
+    List<String> localizationDayOfWeek = [];
+
+    await initializeDateFormatting();
+
+    /// if months is empty
+    if (widget.months?.isEmpty ?? true) {
+      localizationMonths = List.generate(DateTime.monthsPerYear, (index) {
+        var formatDayText = widget.dayFormatter != null
+            ? widget.dayFormatter!(widget.localization)
+            : DateFormat.MMM(widget.localization);
+        return formatDayText.format(DateTime(DateTime.now().year, index));
+      });
+    }
+
+    /// if months is empty
+    if (widget.daysOfWeek?.isEmpty ?? true) {
+      localizationDayOfWeek = getDaysOfWeek(widget.localization);
+    }
+    var c = separateWeeks(widget.minDate, widget.maxDate, widget.daysOfWeek ?? localizationDayOfWeek,
+        widget.months ?? localizationMonths);
     controller
       .._weeks.clear()
-      .._weeks.addAll(separateWeeks(widget.minDate, widget.maxDate, widget.daysOfWeek, widget.months))
+      .._weeks.addAll(c)
 
       /// [_currentWeekIndex] is index of week in [List] weeks contain today
 
@@ -360,6 +404,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
     /// Init Page controller
     /// Set [initialPage] is page contain today
     _pageController = PageController(initialPage: controller._currentWeekIndex);
+    setState(() {});
   }
 
   @override
@@ -373,22 +418,27 @@ class _CalendarWeekState extends State<CalendarWeek> {
 
   /// Body layout
   Widget _body() => Container(
-      color: widget.calenderDecoration == null ? widget.backgroundColor : null,
-      width: double.infinity,
-      height: widget.height,
-      decoration: widget.calenderDecoration,
-      child: ScrollConfiguration(
-        behavior: CustomScrollBehavior(),
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: controller._weeks.length,
-          onPageChanged: (currentPage) {
-            widget.controller!._currentWeekIndex = currentPage;
-            widget.onWeekChanged();
-          },
-          itemBuilder: (_, i) => _week(controller._weeks[i]),
+        color: widget.calenderDecoration == null ? widget.backgroundColor : null,
+        width: double.infinity,
+        height: widget.height,
+        decoration: widget.calenderDecoration,
+        child: ScrollConfiguration(
+          behavior: CustomScrollBehavior(),
+          child: _pageController == null
+              ? SizedBox()
+              : PageView.builder(
+                  controller: _pageController,
+                  itemCount: controller._weeks.length,
+                  onPageChanged: (currentPage) {
+                    widget.controller!._currentWeekIndex = currentPage;
+                    widget.onWeekChanged();
+                  },
+                  itemBuilder: (_, i) {
+                    var week = controller._weeks[i];
+                    return _week(week);
+                  }),
         ),
-      ));
+      );
 
   /// Layout of week
   Widget _week(WeekItem weeks) => Column(
@@ -433,7 +483,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
         decoration: widget.dayOfWeekDecoration,
         child: Text(
           title,
-          style: widget.weekendsIndexes.indexOf(widget.daysOfWeek.indexOf(title)) != -1
+          style: widget.weekendsIndexes.indexOf(widget.daysOfWeek?.indexOf(title) ?? -1) != -1
               ? widget.weekendsStyle
               : widget.dayOfWeekStyle,
           overflow: TextOverflow.ellipsis,
