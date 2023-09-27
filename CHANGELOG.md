@@ -1,3 +1,5 @@
+## [3.0.1]
+ - Update intl 0.18.1 
 ## [3.0.0] 
 - Replace `FlatButton` by `Container`
 - Use `BoxShape` for `dayShapeBorder` instead `ShapeBorder`
