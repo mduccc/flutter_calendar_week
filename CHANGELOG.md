@@ -1,6 +1,5 @@
 ## [3.0.2]
  - Update CHANGELOG
- - 
 ## [3.0.1]
  - Update intl 0.18.1 
   
