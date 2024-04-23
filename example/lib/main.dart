@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
                     spreadRadius: 1)
               ]),
               child: CalendarWeek(
+                arrowColor: Colors.blue,
                 controller: _controller,
                 height: 100,
                 showMonth: true,

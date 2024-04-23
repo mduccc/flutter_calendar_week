@@ -373,10 +373,10 @@ class _CalendarWeekState extends State<CalendarWeek> {
                 0) // Only show if not the first page
               Positioned(
                 top: 0,
-                bottom: 0,
+                bottom: 25,
                 left: 2.0,
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded),
+                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: widget.arrowColor),
                   onPressed: () {
                     if (controller._currentWeekIndex > 0) {
                       int newPage = controller._currentWeekIndex - 1;
@@ -391,10 +391,10 @@ class _CalendarWeekState extends State<CalendarWeek> {
                 controller._weeks.length - 1) // Only show if not the last page
               Positioned(
                 top: 0,
-                bottom: 0,
+                bottom: 25,
                 right: 2.0,
                 child: IconButton(
-                  icon: Icon(Icons.arrow_forward_ios_rounded),
+                  icon: Icon(Icons.arrow_forward_ios_rounded, color: widget.arrowColor),
                   onPressed: () {
                     if (controller._currentWeekIndex <
                         controller._weeks.length - 1) {

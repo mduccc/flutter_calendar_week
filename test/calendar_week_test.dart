@@ -59,6 +59,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
         home: Material(
           child: CalendarWeek(
+            arrowColor: Colors.blue,
             minDate: DateTime.now().add(Duration(days: -365)),
             maxDate: DateTime.now().add(Duration(days: 365)),
             controller: controller,
