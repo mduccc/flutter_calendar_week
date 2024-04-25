@@ -106,6 +106,7 @@ class CalendarWeek extends StatefulWidget {
   final Color arrowColor;
   final EdgeInsets viewPagerPadding;
   final EdgeInsets viewPagerMargin;
+  final double viewPagerScale;
 
   /// Calendar start from [minDate]
   final DateTime minDate;
@@ -215,7 +216,8 @@ class CalendarWeek extends StatefulWidget {
       this.onWeekChanged,
       this.arrowColor,
       this.viewPagerPadding,
-      this.viewPagerMargin)
+      this.viewPagerMargin,
+      this.viewPagerScale)
       : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
@@ -255,8 +257,8 @@ class CalendarWeek extends StatefulWidget {
           CalendarWeekController? controller,
           Function()? onWeekChanged,
           Color arrowColor = Colors.black, // Default arrow color
-          EdgeInsets viewPagerPadding =
-              const EdgeInsets.symmetric(horizontal: 12.0) // Default padding
+          EdgeInsets viewPagerPadding = const EdgeInsets.symmetric(horizontal: 12.0), // Default padding
+          double viewPagerScale =  0// Default padding
           ,
           EdgeInsets viewPagerMargin =
               const EdgeInsets.symmetric(horizontal: 0.0) // Default margin
@@ -291,7 +293,9 @@ class CalendarWeek extends StatefulWidget {
           onWeekChanged ?? () {},
           arrowColor,
           viewPagerPadding,
-          viewPagerMargin);
+          viewPagerMargin,
+        viewPagerScale
+      );
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
@@ -362,7 +366,7 @@ class _CalendarWeekState extends State<CalendarWeek> {
       child: Stack(
         children: [
           Transform.scale(
-            scale: screenWidth * 0.0024,
+            scale: widget.viewPagerScale,
             child: Container(
               padding: widget.viewPagerPadding,
               child: PageView.builder(
