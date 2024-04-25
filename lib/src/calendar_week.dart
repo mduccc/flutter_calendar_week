@@ -256,7 +256,7 @@ class CalendarWeek extends StatefulWidget {
           Function()? onWeekChanged,
           Color arrowColor = Colors.black, // Default arrow color
           EdgeInsets viewPagerPadding =
-              const EdgeInsets.symmetric(horizontal: 40.0) // Default padding
+              const EdgeInsets.symmetric(horizontal: 12.0) // Default padding
           ,
           EdgeInsets viewPagerMargin =
               const EdgeInsets.symmetric(horizontal: 0.0) // Default margin
@@ -292,7 +292,6 @@ class CalendarWeek extends StatefulWidget {
           arrowColor,
           viewPagerPadding,
           viewPagerMargin);
-
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
@@ -349,13 +348,22 @@ class _CalendarWeekState extends State<CalendarWeek> {
   Widget build(BuildContext context) => _body();
 
   /// Body layout
-  Widget _body() => Container(
-        color: widget.backgroundColor,
-        width: double.infinity,
-        height: widget.height,
-        child: Stack(
-          children: [
-            Padding(
+  Widget _body() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.width;
+    double calendarHeight = screenHeight * 0.25; // 30% of the screen height
+    double calendarWidth = screenWidth * 0.9; // 90% of the screen width
+
+    return Container(
+      margin: widget.viewPagerMargin,
+      color: widget.backgroundColor,
+      width: double.infinity,
+      height: widget.height,
+      child: Stack(
+        children: [
+          Transform.scale(
+            scale: screenWidth * 0.0024,
+            child: Container(
               padding: widget.viewPagerPadding,
               child: PageView.builder(
                 controller: _pageController,
@@ -369,46 +377,50 @@ class _CalendarWeekState extends State<CalendarWeek> {
                 itemBuilder: (_, i) => _week(controller._weeks[i]),
               ),
             ),
-            if (controller._currentWeekIndex >
-                0) // Only show if not the first page
-              Positioned(
-                top: 0,
-                bottom: 25,
-                left: 2.0,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: widget.arrowColor),
-                  onPressed: () {
-                    if (controller._currentWeekIndex > 0) {
-                      int newPage = controller._currentWeekIndex - 1;
-                      _pageController.animateToPage(newPage,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.ease);
-                    }
-                  },
-                ),
+          ),
+          if (controller._currentWeekIndex >
+              0) // Only show if not the first page
+            Positioned(
+              top: 0,
+              bottom: calendarHeight * 0.2,
+              left: screenWidth * 0.00,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_ios_new_rounded,
+                    color: widget.arrowColor),
+                onPressed: () {
+                  if (controller._currentWeekIndex > 0) {
+                    int newPage = controller._currentWeekIndex - 1;
+                    _pageController.animateToPage(newPage,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                  }
+                },
               ),
-            if (controller._currentWeekIndex <
-                controller._weeks.length - 1) // Only show if not the last page
-              Positioned(
-                top: 0,
-                bottom: 25,
-                right: 2.0,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_forward_ios_rounded, color: widget.arrowColor),
-                  onPressed: () {
-                    if (controller._currentWeekIndex <
-                        controller._weeks.length - 1) {
-                      int newPage = controller._currentWeekIndex + 1;
-                      _pageController.animateToPage(newPage,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.ease);
-                    }
-                  },
-                ),
+            ),
+          if (controller._currentWeekIndex <
+              controller._weeks.length - 1) // Only show if not the last page
+            Positioned(
+              top: 0,
+              bottom: calendarHeight * 0.2,
+              right: screenWidth * 0.00,
+              child: IconButton(
+                icon: Icon(Icons.arrow_forward_ios_rounded,
+                    color: widget.arrowColor),
+                onPressed: () {
+                  if (controller._currentWeekIndex <
+                      controller._weeks.length - 1) {
+                    int newPage = controller._currentWeekIndex + 1;
+                    _pageController.animateToPage(newPage,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                  }
+                },
               ),
-          ],
-        ),
-      );
+            ),
+        ],
+      ),
+    );
+  }
 
   /// Layout of week
   Widget _week(WeekItem weeks) => Column(

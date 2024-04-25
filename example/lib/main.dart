@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                 height: 100,
                 showMonth: true,
                 minDate: DateTime.now().add(
-                  Duration(days: -12),
+                  Duration(days: -13),
                 ),
                 maxDate: DateTime.now().add(
                   Duration(days: 0),
