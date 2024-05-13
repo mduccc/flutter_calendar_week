@@ -1,0 +1,10 @@
+final Map<String, String> messagesEn = {
+  'hello': 'Hello!',
+  'welcome': 'Welcome to our package!',
+};
+
+// lib/src/l10n/intl_messages_es.dart
+final Map<String, String> messagesEs = {
+  'hello': '¡Hola!',
+  'welcome': '¡Bienvenido a nuestro paquete!',
+};

@@ -9,7 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localization: ^0.2.0
   intl: ^0.18.1
+  intl_utils: ^2.1.0
+
   
 
 dev_dependencies:
@@ -21,6 +24,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true
 
   # To add assets to your package, add an assets section, like this:
   # assets:
@@ -52,3 +56,5 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true
