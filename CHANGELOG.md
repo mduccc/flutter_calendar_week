@@ -1,3 +1,6 @@
+## [3.0.3]
+ - Update intl 0.19.0
+ - Update supported Dart version up to 4.0.0
 ## [3.0.2]
  - Update CHANGELOG
 ## [3.0.1]
