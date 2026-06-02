@@ -2,8 +2,8 @@
 Flutter calendar week UI package
 
 
-##### IOS | Android:
-<img src="https://i.imgur.com/Qv78xwO.png" width="40%" height="40%"/> <img src="https://i.imgur.com/oUQYCbC.png" width="43.29%" height="42.45%"/>
+##### Screenshot:
+<img src="screenshot/example_app.png" width="40%" height="40%"/>
 
 <br>
 

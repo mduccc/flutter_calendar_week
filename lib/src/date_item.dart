@@ -1,52 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/src/cache_stream_widget.dart';
-import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 
-class DateItem extends StatefulWidget {
-  /// Today
+class DateItem extends StatelessWidget {
   final DateTime today;
-
-  /// Date of item
   final DateTime? date;
-
-  /// Style of [date]
   final TextStyle? dateStyle;
-
-  /// Style of day after pressed
   final TextStyle? pressedDateStyle;
-
-  /// Background
   final Color? backgroundColor;
-
-  /// Specify a background if [date] is [today]
   final Color? todayBackgroundColor;
-
-  /// Specify a background after pressed
   final Color? pressedBackgroundColor;
-
-  /// Alignment a decoration
   final Alignment? decorationAlignment;
-
-  /// Specify a shape
   final BoxShape? dayShapeBorder;
-
-  /// [Callback] function for press event
   final void Function(DateTime)? onDatePressed;
-
-  /// [Callback] function for long press event
   final void Function(DateTime)? onDateLongPressed;
-
-  /// Decoration widget
   final Widget? decoration;
+  final ValueNotifier<DateTime?> selectedDateNotifier;
 
-  /// [cacheStream] for emit date press event
-  final CacheStream<DateTime?> cacheStream;
-
-  DateItem({
+  const DateItem({
     required this.today,
     required this.date,
-    required this.cacheStream,
+    required this.selectedDateNotifier,
     this.dateStyle,
     this.pressedDateStyle,
     this.backgroundColor = Colors.transparent,
@@ -60,112 +33,72 @@ class DateItem extends StatefulWidget {
   });
 
   @override
-  __DateItemState createState() => __DateItemState();
-}
-
-class __DateItemState extends State<DateItem> {
-  /// Default background
-  Color? _defaultBackgroundColor;
-
-  /// Default style
-  TextStyle? _defaultTextStyle;
-
-  @override
-  Widget build(BuildContext context) => widget.date != null
-      ? CacheStreamBuilder<DateTime?>(
-          cacheStream: widget.cacheStream,
-          cacheBuilder: (_, data) {
-            /// Set default each [builder] is called
-            _defaultBackgroundColor = widget.backgroundColor;
-
-            /// Set default style each [builder] is called
-            _defaultTextStyle = widget.dateStyle;
-
-            /// Check and set [Background] of today
-            if (compareDate(widget.date, widget.today)) {
-              _defaultBackgroundColor = widget.todayBackgroundColor;
-            } else if (!data.hasError && data.hasData) {
-              final DateTime? dateSelected = data.data;
-              if (compareDate(widget.date, dateSelected)) {
-                _defaultBackgroundColor = widget.pressedBackgroundColor;
-                _defaultTextStyle = widget.pressedDateStyle;
-              }
-            }
-            return _body();
-          },
+  Widget build(BuildContext context) => date != null
+      ? ValueListenableBuilder<DateTime?>(
+          valueListenable: selectedDateNotifier,
+          builder: (_, selectedDate, __) => _body(selectedDate),
         )
-      : Container(
-          width: 50,
-          height: 50,
-        );
+      : const SizedBox(width: 50, height: 50);
 
-  /// Body layout
-  Widget _body() => Container(
-        width: 50,
-        height: 50,
-        alignment: FractionalOffset.center,
+  Widget _body(DateTime? selectedDate) {
+    Color? bgColor = backgroundColor;
+    TextStyle? textStyle = dateStyle;
+
+    if (compareDate(date, today)) {
+      bgColor = todayBackgroundColor;
+    } else if (compareDate(date, selectedDate)) {
+      bgColor = pressedBackgroundColor;
+      textStyle = pressedDateStyle;
+    }
+
+    return Container(
+      width: 50,
+      height: 50,
+      alignment: FractionalOffset.center,
+      child: GestureDetector(
+        onLongPress: _onLongPressed,
         child: GestureDetector(
-          onLongPress: _onLongPressed,
-          child: GestureDetector(
-            onTap: _onPressed,
-            child: Container(
-                decoration: BoxDecoration(
-                  color: _defaultBackgroundColor!,
-                  shape: widget.dayShapeBorder!,
+          onTap: _onPressed,
+          child: Container(
+            decoration: BoxDecoration(
+              color: bgColor!,
+              shape: dayShapeBorder!,
+            ),
+            padding: const EdgeInsets.all(5),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(child: Text('${date!.day}', style: textStyle!)),
                 ),
-                padding: EdgeInsets.all(5),
-                child: Stack(
-                  children: <Widget>[
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '${widget.date!.day}',
-                          style: _defaultTextStyle!,
-                        ),
-                      ),
-                    ),
-                    _decoration()
-                  ],
-                )),
+                _decoration(),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _decoration() => Align(
+        alignment: decorationAlignment!,
+        child: decoration ?? const SizedBox.shrink(),
       );
 
-  /// Decoration layout
-  Widget _decoration() => Positioned(
-        top: 28,
-        left: 0,
-        right: 0,
-        child: Container(
-            width: 50,
-            height: 12,
-            alignment: widget.decorationAlignment,
-            child: widget.decoration != null
-                ? FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: widget.decoration!,
-                  )
-                : Container()),
-      );
-
-  /// Handler press event
   void _onPressed() {
-    if (widget.date != null) {
-      widget.cacheStream.add(widget.date);
-      widget.onDatePressed!(widget.date!);
+    if (date != null) {
+      selectedDateNotifier.value = date;
+      onDatePressed?.call(date!);
     }
   }
 
-  /// Handler long press event
   void _onLongPressed() {
-    if (widget.date != null) {
-      widget.cacheStream.add(widget.date);
-      widget.onDateLongPressed!(widget.date!);
+    if (date != null) {
+      selectedDateNotifier.value = date;
+      onDateLongPressed?.call(date!);
     }
   }
 }

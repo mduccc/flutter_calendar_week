@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/mducc1412/Documents/Projects/Persional/flutter_calendar_week/.vscode)"
+    ],
+    "additionalDirectories": [
+      "/Users/mducc1412/Documents/Projects/Persional/flutter_calendar_week"
+    ]
+  }
+}
