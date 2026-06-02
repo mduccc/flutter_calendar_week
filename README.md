@@ -3,7 +3,7 @@ Flutter calendar week UI package
 
 
 ##### Screenshot:
-<img src="screenshot/example_app.png" width="40%" height="40%"/>
+<img src="screenshot/example_app_1.png" width="40%"/>
 
 <br>
 
