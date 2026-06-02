@@ -1,11 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_week/src/custom_scroll_behaiver.dart';
+import 'package:flutter_calendar_week/src/custom_scroll_behavior.dart';
 import 'package:flutter_calendar_week/src/date_item.dart';
 import 'package:flutter_calendar_week/src/models/decoration_item.dart';
 import 'package:flutter_calendar_week/src/models/week_item.dart';
 import 'package:flutter_calendar_week/src/strings.dart';
-import 'package:flutter_calendar_week/src/utils/cache_stream.dart';
 import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
 import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
@@ -23,7 +21,7 @@ Example:
                 maxDate: DateTime.now().add(
                   Duration(days: 365),
                 ),
-                
+
                 onDatePressed: (DateTime datetime) {
                   // Do something
                 },
@@ -55,49 +53,86 @@ Example:
               )
 */
 
-  /// Today date time
-  DateTime _today = DateTime.now();
+  /// Today's date, captured at controller construction time
+  final DateTime today = DateTime.now();
 
-  /// Store hast attach to a client state
   bool _hasClient = false;
 
-  /// Return [true] if attached to [CalendarWeek] widget
+  /// Returns [true] if attached to a [CalendarWeek] widget
   bool get hasClient => _hasClient;
 
-  /// Store a selected date
   DateTime? _selectedDate;
 
-  /// Get [_selectedDate] selected;
-  DateTime get selectedDate => _selectedDate ?? _today;
+  /// Currently selected date; falls back to [today] if nothing selected yet
+  DateTime get selectedDate => _selectedDate ?? today;
 
-  /// get [_weeks]
+  /// All dates in the currently visible week
   List<DateTime?> get rangeWeekDate => _weeks.isNotEmpty
       ? _weeks[_currentWeekIndex].days.where((ele) => ele != null).toList()
       : [];
 
-  /// [Callback] for update widget event
-  late Function(DateTime?) _widgetJumpToDate;
+  late Function(DateTime?) _onJumpToDate;
+  late Function(int) _onJumpToWeek;
 
-  /// Index of week display on the screen
   int _currentWeekIndex = 0;
 
-  /// Store a list [DateTime] of weeks display on the screen
   final List<WeekItem> _weeks = [];
 
-  /// [jumpToDate] show week contain [date] on the screen
+  /// Attaches this controller to a [CalendarWeek] widget state.
+  void _attach({
+    required List<WeekItem> weeks,
+    required int currentWeekIndex,
+    required Function(DateTime?) onJumpToDate,
+    required Function(int) onJumpToWeek,
+  }) {
+    assert(!_hasClient, 'CalendarWeekController is already attached to a widget');
+    _weeks
+      ..clear()
+      ..addAll(weeks);
+    _currentWeekIndex = currentWeekIndex;
+    _onJumpToDate = onJumpToDate;
+    _onJumpToWeek = onJumpToWeek;
+    _hasClient = true;
+  }
+
+  /// Detaches this controller when the widget is disposed.
+  void _detach() {
+    _hasClient = false;
+    _weeks.clear();
+  }
+
+  /// Scrolls the calendar to the week containing [date] and selects it.
   void jumpToDate(DateTime date) {
-    /// Find [_newCurrentWeekIndex] corresponding new [dateTime]
-    final _newCurrentWeekIndex = findCurrentWeekIndexByDate(date, _weeks);
-
-    /// If has matched, update [_currentWeekIndex], [_selectedDate]
-    /// and call [_widgetJumpToDate] for update widget
-    if (_newCurrentWeekIndex != -1) {
-      _currentWeekIndex = _newCurrentWeekIndex;
-
+    final newIndex = findCurrentWeekIndexByDate(date, _weeks);
+    if (newIndex != -1) {
+      _currentWeekIndex = newIndex;
       _selectedDate = date;
+      _onJumpToDate(_selectedDate);
+    }
+  }
 
-      /// Call [_widgetJumpToDate] for update Widget
-      _widgetJumpToDate(_selectedDate);
+  /// Scrolls the calendar to the week containing [date] without changing the selected date.
+  void jumpToWeek(DateTime date) {
+    final newIndex = findCurrentWeekIndexByDate(date, _weeks);
+    if (newIndex != -1) {
+      _currentWeekIndex = newIndex;
+      _onJumpToWeek(newIndex);
+    }
+  }
+
+  /// Advances the calendar to the next week without changing the selected date.
+  void nextWeek() {
+    if (_currentWeekIndex < _weeks.length - 1) {
+      _currentWeekIndex++;
+      _onJumpToWeek(_currentWeekIndex);
+    }
+  }
+
+  /// Moves the calendar back to the previous week without changing the selected date.
+  void previousWeek() {
+    if (_currentWeekIndex > 0) {
+      _currentWeekIndex--;
+      _onJumpToWeek(_currentWeekIndex);
     }
   }
 }
@@ -181,6 +216,10 @@ class CalendarWeek extends StatefulWidget {
   /// [Callback] changed week event
   final Function() onWeekChanged;
 
+  /// Scroll physics for the week page view. Use [NeverScrollableScrollPhysics]
+  /// to disable swiping.
+  final ScrollPhysics? physics;
+
   CalendarWeek._(
       Key? key,
       this.maxDate,
@@ -208,7 +247,8 @@ class CalendarWeek extends StatefulWidget {
       this.dayShapeBorder,
       this.decorations,
       this.controller,
-      this.onWeekChanged)
+      this.onWeekChanged,
+      this.physics)
       : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
@@ -246,11 +286,12 @@ class CalendarWeek extends StatefulWidget {
           BoxShape dayShapeBorder = BoxShape.circle,
           List<DecorationItem> decorations = const [],
           CalendarWeekController? controller,
-          Function()? onWeekChanged}) =>
+          Function()? onWeekChanged,
+          ScrollPhysics? physics}) =>
       CalendarWeek._(
           key,
-          maxDate ?? DateTime.now().add(Duration(days: 180)),
-          minDate ?? DateTime.now().add(Duration(days: -180)),
+          maxDate ?? DateTime.now().add(const Duration(days: 180)),
+          minDate ?? DateTime.now().add(const Duration(days: -180)),
           height,
           monthViewBuilder,
           dayOfWeekStyle,
@@ -274,50 +315,51 @@ class CalendarWeek extends StatefulWidget {
           dayShapeBorder,
           decorations,
           controller,
-          onWeekChanged ?? () {});
+          onWeekChanged ?? () {},
+          physics);
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
 }
 
 class _CalendarWeekState extends State<CalendarWeek> {
-  /// [_streamController] for emit date press event
-  final CacheStream<DateTime?> _cacheStream = CacheStream<DateTime?>();
+  /// Notifier broadcast the currently selected date to all [DateItem] widgets
+  final ValueNotifier<DateTime?> _selectedDateNotifier = ValueNotifier(null);
 
-  /// [_stream] for listen date change event
-  Stream<DateTime?>? _stream;
-
-  /// Page controller
   late PageController _pageController;
 
-  CalendarWeekController _defaultCalendarController = CalendarWeekController();
+  final CalendarWeekController _defaultController = CalendarWeekController();
 
   CalendarWeekController get controller =>
-      widget.controller ?? _defaultCalendarController;
+      widget.controller ?? _defaultController;
 
   void _jumToDateHandler(DateTime? dateTime) {
-    _cacheStream.add(dateTime);
-    _pageController.animateToPage(widget.controller!._currentWeekIndex,
-        duration: Duration(milliseconds: 300), curve: Curves.ease);
+    _selectedDateNotifier.value = dateTime;
+    _pageController.animateToPage(
+      controller._currentWeekIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
+  void _jumpToWeekHandler(int pageIndex) {
+    _pageController.animateToPage(
+      pageIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
   }
 
   void _setUp() {
-    assert(controller.hasClient == false);
-    _stream ??= _cacheStream.stream!.asBroadcastStream();
-    controller
-      .._weeks.clear()
-      .._weeks.addAll(separateWeeks(
-          widget.minDate, widget.maxDate, widget.daysOfWeek, widget.months))
-
-      /// [_currentWeekIndex] is index of week in [List] weeks contain today
-
-      .._currentWeekIndex =
-          findCurrentWeekIndexByDate(controller._today, controller._weeks)
-      .._widgetJumpToDate = _jumToDateHandler
-      .._hasClient = true;
-
-    /// Init Page controller
-    /// Set [initialPage] is page contain today
+    assert(!controller.hasClient);
+    final weeks = separateWeeks(
+        widget.minDate, widget.maxDate, widget.daysOfWeek, widget.months);
+    controller._attach(
+      weeks: weeks,
+      currentWeekIndex: findCurrentWeekIndexByDate(controller.today, weeks),
+      onJumpToDate: _jumToDateHandler,
+      onJumpToWeek: _jumpToWeekHandler,
+    );
     _pageController = PageController(initialPage: controller._currentWeekIndex);
   }
 
@@ -330,7 +372,6 @@ class _CalendarWeekState extends State<CalendarWeek> {
   @override
   Widget build(BuildContext context) => _body();
 
-  /// Body layout
   Widget _body() => Container(
       color: widget.backgroundColor,
       width: double.infinity,
@@ -339,49 +380,43 @@ class _CalendarWeekState extends State<CalendarWeek> {
         behavior: CustomScrollBehavior(),
         child: PageView.builder(
           controller: _pageController,
+          physics: widget.physics,
           itemCount: controller._weeks.length,
           onPageChanged: (currentPage) {
-            widget.controller!._currentWeekIndex = currentPage;
+            controller._currentWeekIndex = currentPage;
             widget.onWeekChanged();
           },
           itemBuilder: (_, i) => _week(controller._weeks[i]),
         ),
       ));
 
-  /// Layout of week
   Widget _week(WeekItem weeks) => Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          // Month
           (widget.monthDisplay &&
                   widget.monthViewBuilder != null &&
                   weeks.days.firstWhere((el) => el != null) != null)
               ? widget
                   .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
               : _monthItem(weeks.month),
-
-          /// Day of week layout
           _dayOfWeek(weeks.dayOfWeek),
-
-          /// Date layout
-          _dates(weeks.days)
+          Expanded(child: _dates(weeks.days))
         ],
       );
 
-  /// Day of week item layout
   Widget _monthItem(String title) => Align(
         alignment: widget.monthAlignment,
         child: Container(
             margin: widget.marginMonth,
             child: Text(
               title,
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                  color: Colors.blue, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             )),
       );
 
-  /// Day of week layout
   Widget _dayOfWeek(List<String> dayOfWeek) => Container(
         margin: widget.marginDayOfWeek,
         child: Row(
@@ -389,12 +424,11 @@ class _CalendarWeekState extends State<CalendarWeek> {
             children: dayOfWeek.map(_dayOfWeekItem).toList()),
       );
 
-  /// Day of week item layout
   Widget _dayOfWeekItem(String title) => Container(
       alignment: Alignment.center,
       child: FittedBox(
         fit: BoxFit.scaleDown,
-        child: Container(
+        child: SizedBox(
           width: 50,
           child: Text(
             title,
@@ -409,16 +443,14 @@ class _CalendarWeekState extends State<CalendarWeek> {
         ),
       ));
 
-  /// Date layout
   Widget _dates(List<DateTime?> dates) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: dates.map(_dateItem).toList());
 
-  /// Date item layout
   Widget _dateItem(DateTime? date) => DateItem(
-      today: controller._today,
+      today: controller.today,
       date: date,
-      dateStyle: compareDate(date, controller._today)
+      dateStyle: compareDate(date, controller.today)
           ? widget.todayDateStyle
           : date != null && (date.weekday == 6 || date.weekday == 7)
               ? widget.weekendsStyle
@@ -428,13 +460,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
       todayBackgroundColor: widget.todayBackgroundColor,
       pressedBackgroundColor: widget.datePressedBackgroundColor,
       decorationAlignment: () {
-        /// If date is contain in decorations list, use decorations Alignment
         if (widget.decorations.isNotEmpty) {
-          final List<DecorationItem> matchDate = widget.decorations
+          final matches = widget.decorations
               .where((ele) => compareDate(ele.date, date))
               .toList();
-          return matchDate.isNotEmpty
-              ? matchDate[0].decorationAlignment
+          return matches.isNotEmpty
+              ? matches[0].decorationAlignment
               : FractionalOffset.center;
         }
         return FractionalOffset.center;
@@ -449,20 +480,20 @@ class _CalendarWeekState extends State<CalendarWeek> {
         widget.onDateLongPressed(datePressed);
       },
       decoration: () {
-        /// If date is contain in decorations list, use decorations Widget
         if (widget.decorations.isNotEmpty) {
-          final List<DecorationItem> matchDate = widget.decorations
+          final matches = widget.decorations
               .where((ele) => compareDate(ele.date, date))
               .toList();
-          return matchDate.isNotEmpty ? matchDate[0].decoration : null;
+          return matches.isNotEmpty ? matches[0].decoration : null;
         }
         return null;
       }(),
-      cacheStream: _cacheStream);
+      selectedDateNotifier: _selectedDateNotifier);
 
   @override
   void dispose() {
+    controller._detach();
+    _selectedDateNotifier.dispose();
     super.dispose();
-    _cacheStream.close();
   }
 }
