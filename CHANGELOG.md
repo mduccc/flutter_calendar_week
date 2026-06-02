@@ -1,3 +1,6 @@
+## [4.0.1]
+ - Update metadata
+
 ## [4.0.0]
  - Add `nextWeek()`, `previousWeek()`, `jumpToWeek(DateTime)` to `CalendarWeekController`
  - Add `physics` parameter to `CalendarWeek`
