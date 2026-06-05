@@ -54,6 +54,45 @@ void main() {
           findCurrentWeekIndexByDate(DateTime(2020, 1, 9), separated);
       expect(currentWeekIndex, 1);
     });
+    testWidgets('showMonth: false hides the month row',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Material(
+          child: CalendarWeek(
+            minDate: DateTime.now().add(Duration(days: -365)),
+            maxDate: DateTime.now().add(Duration(days: 365)),
+            showMonth: false,
+          ),
+        ),
+      ));
+
+      // The default month text (e.g. "January") must not appear anywhere.
+      for (final month in monthDefaults) {
+        expect(find.text(month), findsNothing);
+      }
+    });
+
+    testWidgets('showMonth: true (default) shows the month row',
+        (WidgetTester tester) async {
+      final now = DateTime.now();
+      await tester.pumpWidget(MaterialApp(
+        home: Material(
+          child: CalendarWeek(
+            minDate: now.add(Duration(days: -365)),
+            maxDate: now.add(Duration(days: 365)),
+            showMonth: true,
+          ),
+        ),
+      ));
+
+      // At least one month name must be visible.
+      final monthTexts = monthDefaults
+          .map((m) => find.text(m))
+          .where((f) => tester.any(f))
+          .toList();
+      expect(monthTexts, isNotEmpty);
+    });
+
     testWidgets('CalendarWeek widget is working correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
