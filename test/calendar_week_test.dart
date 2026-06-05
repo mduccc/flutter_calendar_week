@@ -13,7 +13,6 @@ import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
 import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   CalendarWeekController? controller;
@@ -125,9 +124,7 @@ void main() {
       expect(diff, 0);
     });
 
-    test('daysOfWeekForLocale returns 7 upper-case labels for English',
-        () async {
-      await initializeDateFormatting('en');
+    test('daysOfWeekForLocale returns 7 upper-case labels for English', () {
       final days = daysOfWeekForLocale('en');
       expect(days.length, 7);
       // All labels must be upper-case non-empty strings
@@ -140,8 +137,7 @@ void main() {
       expect(days.last, 'SUN');
     });
 
-    test('monthsForLocale returns 12 upper-case labels for English', () async {
-      await initializeDateFormatting('en');
+    test('monthsForLocale returns 12 upper-case labels for English', () {
       final months = monthsForLocale('en');
       expect(months.length, 12);
       for (final m in months) {
@@ -152,9 +148,8 @@ void main() {
       expect(months.last, 'DECEMBER');
     });
 
-    test('daysOfWeekForLocale returns French labels after initialization',
-        () async {
-      await initializeDateFormatting('fr');
+    test('daysOfWeekForLocale returns French labels without initialization',
+        () {
       final days = daysOfWeekForLocale('fr');
       expect(days.length, 7);
       for (final d in days) {
@@ -167,7 +162,6 @@ void main() {
 
     testWidgets('locale parameter generates localized day/month labels',
         (WidgetTester tester) async {
-      await initializeDateFormatting('fr');
       final frDays = daysOfWeekForLocale('fr');
       final frMonths = monthsForLocale('fr');
 
