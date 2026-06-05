@@ -188,6 +188,12 @@ class CalendarWeek extends StatefulWidget {
   /// List contain title months
   final List<String> months;
 
+  /// BCP 47 locale tag used to auto-generate day/month labels (e.g. `'fr'`,
+  /// `'ja'`, `'pt_BR'`). Ignored when explicit [dayOfWeek] or [month] lists
+  /// are passed. Requires [initializeDateFormatting] to have been called for
+  /// non-English locales.
+  final String? locale;
+
   /// Condition show month
   final bool monthDisplay;
 
@@ -247,7 +253,8 @@ class CalendarWeek extends StatefulWidget {
       this.decorations,
       this.controller,
       this.onWeekChanged,
-      this.physics)
+      this.physics,
+      this.locale)
       : assert(daysOfWeek.length == 7),
         assert(months.length == 12),
         assert(minDate.isBefore(maxDate)),
@@ -274,8 +281,9 @@ class CalendarWeek extends StatefulWidget {
           Function(DateTime)? onDatePressed,
           Function(DateTime)? onDateLongPressed,
           Color backgroundColor = Colors.white,
-          List<String> dayOfWeek = dayOfWeekDefault,
-          List<String> month = monthDefaults,
+          List<String>? dayOfWeek,
+          List<String>? month,
+          String? locale,
           bool showMonth = true,
           List<int> weekendsIndexes = weekendsIndexesDefault,
           TextStyle weekendsStyle =
@@ -304,8 +312,8 @@ class CalendarWeek extends StatefulWidget {
           onDatePressed ?? (DateTime date) {},
           onDateLongPressed ?? (DateTime date) {},
           backgroundColor,
-          dayOfWeek,
-          month,
+          dayOfWeek ?? (locale != null ? daysOfWeekForLocale(locale) : dayOfWeekDefault),
+          month ?? (locale != null ? monthsForLocale(locale) : monthDefaults),
           showMonth,
           weekendsIndexes,
           weekendsStyle,
@@ -315,7 +323,8 @@ class CalendarWeek extends StatefulWidget {
           decorations,
           controller,
           onWeekChanged ?? () {},
-          physics);
+          physics,
+          locale);
 
   @override
   _CalendarWeekState createState() => _CalendarWeekState();
