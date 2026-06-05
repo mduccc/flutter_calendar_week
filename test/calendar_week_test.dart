@@ -13,6 +13,7 @@ import 'package:flutter_calendar_week/src/utils/compare_date.dart';
 import 'package:flutter_calendar_week/src/utils/find_current_week_index.dart';
 import 'package:flutter_calendar_week/src/utils/separate_weeks.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   CalendarWeekController? controller;
@@ -122,6 +123,101 @@ void main() {
       controller!.jumpToDate(selectDateB);
       diff = controller!.selectedDate.difference(selectDateA).inDays;
       expect(diff, 0);
+    });
+
+    test('daysOfWeekForLocale returns 7 upper-case labels for English',
+        () async {
+      await initializeDateFormatting('en');
+      final days = daysOfWeekForLocale('en');
+      expect(days.length, 7);
+      // All labels must be upper-case non-empty strings
+      for (final d in days) {
+        expect(d, isNotEmpty);
+        expect(d, equals(d.toUpperCase()));
+      }
+      // English abbreviated days start Mon → Mon
+      expect(days.first, 'MON');
+      expect(days.last, 'SUN');
+    });
+
+    test('monthsForLocale returns 12 upper-case labels for English', () async {
+      await initializeDateFormatting('en');
+      final months = monthsForLocale('en');
+      expect(months.length, 12);
+      for (final m in months) {
+        expect(m, isNotEmpty);
+        expect(m, equals(m.toUpperCase()));
+      }
+      expect(months.first, 'JANUARY');
+      expect(months.last, 'DECEMBER');
+    });
+
+    test('daysOfWeekForLocale returns French labels after initialization',
+        () async {
+      await initializeDateFormatting('fr');
+      final days = daysOfWeekForLocale('fr');
+      expect(days.length, 7);
+      for (final d in days) {
+        expect(d, isNotEmpty);
+        expect(d, equals(d.toUpperCase()));
+      }
+      // French Monday abbreviation should not be the English 'MON'
+      expect(days.first, isNot('MON'));
+    });
+
+    testWidgets('locale parameter generates localized day/month labels',
+        (WidgetTester tester) async {
+      await initializeDateFormatting('fr');
+      final frDays = daysOfWeekForLocale('fr');
+      final frMonths = monthsForLocale('fr');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Material(
+          child: CalendarWeek(
+            locale: 'fr',
+            minDate: DateTime.now().add(Duration(days: -365)),
+            maxDate: DateTime.now().add(Duration(days: 365)),
+            showMonth: true,
+          ),
+        ),
+      ));
+
+      // Default English labels must NOT appear
+      for (final day in dayOfWeekDefault) {
+        expect(find.text(day), findsNothing);
+      }
+
+      // At least one French day label must be visible
+      final visibleDays =
+          frDays.where((d) => tester.any(find.text(d))).toList();
+      expect(visibleDays, isNotEmpty);
+
+      // At least one French month label must be visible
+      final visibleMonths =
+          frMonths.where((m) => tester.any(find.text(m))).toList();
+      expect(visibleMonths, isNotEmpty);
+    });
+
+    testWidgets(
+        'explicit dayOfWeek list overrides locale when both are provided',
+        (WidgetTester tester) async {
+      const customDays = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+      await tester.pumpWidget(MaterialApp(
+        home: Material(
+          child: CalendarWeek(
+            locale: 'fr',
+            dayOfWeek: customDays,
+            minDate: DateTime.now().add(Duration(days: -365)),
+            maxDate: DateTime.now().add(Duration(days: 365)),
+          ),
+        ),
+      ));
+
+      // Custom labels must appear; locale-derived French labels must not
+      final visibleCustom =
+          customDays.where((d) => tester.any(find.text(d))).toList();
+      expect(visibleCustom, isNotEmpty);
     });
   });
 }
