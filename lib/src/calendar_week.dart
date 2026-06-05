@@ -53,8 +53,7 @@ Example:
               )
 */
 
-  /// Today's date, captured at controller construction time
-  final DateTime today = DateTime.now();
+  DateTime get today => DateTime.now();
 
   bool _hasClient = false;
 
