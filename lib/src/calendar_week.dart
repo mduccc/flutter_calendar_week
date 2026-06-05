@@ -190,8 +190,7 @@ class CalendarWeek extends StatefulWidget {
 
   /// BCP 47 locale tag used to auto-generate day/month labels (e.g. `'fr'`,
   /// `'ja'`, `'pt_BR'`). Ignored when explicit [dayOfWeek] or [month] lists
-  /// are passed. Requires [initializeDateFormatting] to have been called for
-  /// non-English locales.
+  /// are passed.
   final String? locale;
 
   /// Condition show month

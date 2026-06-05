@@ -1,3 +1,9 @@
+## [4.1.0]
+ - Add `locale` parameter to `CalendarWeek` for automatic day/month name localisation
+ - Fix `showMonth` parameter not hiding month row
+ - Fix locale helpers to use built-in intl symbol data
+ - Add unit tests for `showMonth` parameter
+
 ## [4.0.1]
  - Update metadata
 
