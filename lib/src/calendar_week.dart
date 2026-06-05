@@ -392,12 +392,12 @@ class _CalendarWeekState extends State<CalendarWeek> {
   Widget _week(WeekItem weeks) => Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          (widget.monthDisplay &&
-                  widget.monthViewBuilder != null &&
-                  weeks.days.firstWhere((el) => el != null) != null)
-              ? widget
-                  .monthViewBuilder!(weeks.days.firstWhere((el) => el != null)!)
-              : _monthItem(weeks.month),
+          if (widget.monthDisplay)
+            (widget.monthViewBuilder != null &&
+                    weeks.days.firstWhere((el) => el != null) != null)
+                ? widget.monthViewBuilder!(
+                    weeks.days.firstWhere((el) => el != null)!)
+                : _monthItem(weeks.month),
           _dayOfWeek(weeks.dayOfWeek),
           Expanded(child: _dates(weeks.days))
         ],
