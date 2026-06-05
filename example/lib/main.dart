@@ -155,6 +155,7 @@ class _CalendarHeader extends StatelessWidget {
         child: Stack(
           children: [
             CalendarWeek(
+              locale: 'en',
               controller: controller,
               height: 110,
               showMonth: true,
